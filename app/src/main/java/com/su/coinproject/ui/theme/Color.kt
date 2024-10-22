@@ -2,6 +2,9 @@ package com.su.coinproject.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val greenColor = Color(0xFF13BC24)
+val itemBackgroundColor = Color(0xFFF9F9F9)
+val redColor = Color(0xFFF82D2D)
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
