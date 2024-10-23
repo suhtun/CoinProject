@@ -11,16 +11,26 @@ data class CoinUi(
     val name: String,
     val symbol: String,
     val iconUrl: String,
-    val color:String?,
+    val color: String?,
     val price: DisplayableNumber,
     val marketCap: String,
     val change: DisplayableNumber,
+    val rank: Int,
     var description: String? = null,
     var websiteUrl: String? = null
 )
 
-val emptyCoinUi =
-    CoinUi("", "", "", "","", 0.0.toDisplayableNumber(), "0.0", 0.0.toDisplayableNumber(), "", "")
+internal val previewCoinUi = Coin(
+    id = "bitcoin",
+    name = "Bitcoin",
+    color = "#f7931A",
+    symbol = "BTC",
+    price = 1241273958896.75,
+    change = 0.1,
+    rank = 1,
+    marketCap = 1241273958896.54,
+    iconUrl = "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg"
+).toCoinUi()
 
 data class DisplayableNumber(
     val value: Double,
@@ -60,6 +70,7 @@ fun Coin.toCoinUi(): CoinUi {
         price = price.toDisplayableNumber(),
         marketCap = marketCap.toDisplayableNumberwithSuffix(),
         change = change.toDisplayableNumber(),
+        rank = rank
     )
 
 }

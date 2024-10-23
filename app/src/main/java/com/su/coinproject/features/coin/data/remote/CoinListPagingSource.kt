@@ -62,6 +62,7 @@ internal val simpleCoins = List(10) {
         price = 1241273958896.75,
         change = 0.1,
         marketCap = 1241273958896.54,
-        iconUrl = "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg"
+        iconUrl = "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg",
+        rank = 2
     )
 }

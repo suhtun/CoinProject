@@ -12,5 +12,6 @@ data class CoinDto(
     val price: Double,
     val marketCap: Double,
     val change: Double,
+    val rank:Int,
 )
 

@@ -34,7 +34,6 @@ import com.su.coinproject.features.coin.domain.CoinDetail
 import com.su.coinproject.features.coin.presentation.coin_detail.CoinDetailView
 import com.su.coinproject.features.coin.presentation.coin_list.components.CoinListItem
 import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
-import com.su.coinproject.features.coin.presentation.coin_list.model.emptyCoinUi
 import com.su.coinproject.features.coin.presentation.coin_list.model.toCoinUi
 import org.koin.androidx.compose.koinViewModel
 
@@ -69,13 +68,21 @@ fun CoinListScreen(
                     )
                 }
 
+                val topRanks =
+                    coins.itemSnapshotList.items.sortedByDescending { it.rank }.take(3)
+                item {
+                    TopRankCoinListView(coins = topRanks)
+                }
+
                 items(coins.itemCount) { index ->
                     coins[index]?.let { coin ->
-                        CoinListItem(
-                            coin,
-                            onClick = { coinUi ->
-                                viewModel.onAction(CoinListAction.OnCoinClick(coinUi))
-                            })
+                        if(topRanks.any { it.id != coin.id }){
+                            CoinListItem(
+                                coin,
+                                onClick = { coinUi ->
+                                    viewModel.onAction(CoinListAction.OnCoinClick(coinUi))
+                                })
+                        }
                     }
                 }
 
@@ -132,6 +139,7 @@ internal val previewCoin = Coin(
     symbol = "BTC",
     price = 1241273958896.75,
     change = 0.1,
+    rank = 1,
     marketCap = 1241273958896.54,
     iconUrl = "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg",
 ).toCoinUi()

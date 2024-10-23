@@ -12,6 +12,7 @@ fun CoinDto.toCoin(): Coin {
         iconUrl = iconUrl,
         price = price,
         marketCap = marketCap,
-        change = change
+        change = change,
+        rank=rank
     )
 }
