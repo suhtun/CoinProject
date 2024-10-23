@@ -1,26 +1,13 @@
 package com.su.coinproject.features.coin.presentation.coin_list
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,6 +38,7 @@ import com.su.coinproject.features.coin.presentation.coin_list.model.emptyCoinUi
 import com.su.coinproject.features.coin.presentation.coin_list.model.toCoinUi
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CoinListScreen(
     modifier: Modifier = Modifier,
@@ -60,53 +48,60 @@ fun CoinListScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    var isRefreshing by remember { mutableStateOf(false) }
+
     Box(
         modifier = modifier
     ) {
-        LazyColumn(modifier = Modifier.background(Color.White)) {
-
-            item {
-                Text(
-                    text = stringResource(id = R.string.label_coin),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-
-            items(coins.itemCount) { index ->
-                coins[index]?.let { coin ->
-                    CoinListItem(
-                        coin,
-                        onClick = { coinUi ->
-                            viewModel.onAction(CoinListAction.OnCoinClick(coinUi))
-                        })
+        PullToRefreshBox(isRefreshing = isRefreshing,
+            onRefresh = {
+                isRefreshing = true
+                coins.refresh() // Refresh the LazyPagingItems
+            }) {
+            LazyColumn(modifier = Modifier.background(Color.White)) {
+                item {
+                    Text(
+                        text = stringResource(id = R.string.label_coin),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black,
+                        modifier = Modifier.padding(16.dp)
+                    )
                 }
-            }
 
-            item {
-                when {
-                    coins.loadState.refresh is LoadState.Loading -> {
-                        AppLoadingView()
+                items(coins.itemCount) { index ->
+                    coins[index]?.let { coin ->
+                        CoinListItem(
+                            coin,
+                            onClick = { coinUi ->
+                                viewModel.onAction(CoinListAction.OnCoinClick(coinUi))
+                            })
                     }
+                }
 
-                    coins.loadState.refresh is LoadState.Error -> {
-                        val e = coins.loadState.refresh as LoadState.Error
-                        ErrorMessageView(message = e.error.message) {
-                            coins.retry()
+                item {
+                    when {
+                        coins.loadState.refresh is LoadState.Loading -> {
+                            AppLoadingView()
                         }
-                    }
 
-                    coins.loadState.append is LoadState.Error -> {
-                        val e = coins.loadState.append as LoadState.Error
-                        ErrorMessageView(message = e.error.message) {
-                            coins.retry()
+                        coins.loadState.refresh is LoadState.Error -> {
+                            val e = coins.loadState.refresh as LoadState.Error
+                            ErrorMessageView(message = e.error.message) {
+                                coins.retry()
+                            }
                         }
-                    }
 
-                    coins.loadState.append is LoadState.Loading -> {
-                        AppLoadingView()
+                        coins.loadState.append is LoadState.Error -> {
+                            val e = coins.loadState.append as LoadState.Error
+                            ErrorMessageView(message = e.error.message) {
+                                coins.retry()
+                            }
+                        }
+
+                        coins.loadState.append is LoadState.Loading -> {
+                            AppLoadingView()
+                        }
                     }
                 }
             }
@@ -119,6 +114,12 @@ fun CoinListScreen(
 
         if (state.showCoinDetail) {
             CoinDetailView()
+        }
+
+        LaunchedEffect(coins.loadState.refresh) {
+            if (coins.loadState.refresh !is LoadState.Loading) {
+                isRefreshing = false
+            }
         }
 
     }
