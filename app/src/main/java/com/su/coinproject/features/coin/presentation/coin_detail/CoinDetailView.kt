@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
@@ -61,7 +59,7 @@ fun CoinDetailView(viewModel: CoinListViewModel = koinViewModel()) {
     ModalBottomSheet(sheetState = sheetState,
         containerColor = Color.White,
         onDismissRequest = {
-            viewModel.onAction(CoinListAction.OnDismiss)
+            viewModel.onAction(CoinListAction.OnDismissCoinDetailBottomUp)
         }
     ) {
         // Content inside the Bottom Sheet

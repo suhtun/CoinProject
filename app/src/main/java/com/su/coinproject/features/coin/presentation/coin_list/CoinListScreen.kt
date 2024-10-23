@@ -44,6 +44,13 @@ fun CoinListScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    //call refresh every 10 sec and pause while error occur
+    if (state.refreshPaing) {
+        if (!coins.loadState.hasError) {
+            coins.refresh()
+        }
+    }
+
     var isRefreshing by remember { mutableStateOf(false) }
 
     Box(
@@ -132,20 +139,7 @@ fun CoinListScreen(
                 isRefreshing = false
             }
         }
-
     }
 }
-
-internal val previewCoin = Coin(
-    id = "Qwsogvtv82FCd",
-    name = "Bitcoin",
-    color = "#f7931A",
-    symbol = "BTC",
-    price = 1241273958896.75,
-    change = 0.1,
-    rank = 1,
-    marketCap = 1241273958896.54,
-    iconUrl = "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg",
-).toCoinUi()
 
 

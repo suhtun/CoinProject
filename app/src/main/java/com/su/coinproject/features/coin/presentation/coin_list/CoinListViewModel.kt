@@ -11,18 +11,16 @@ import com.su.coinproject.features.coin.domain.Coin
 import com.su.coinproject.features.coin.domain.CoinRepository
 import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
 import com.su.coinproject.features.coin.presentation.coin_list.model.toCoinUi
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CoinListViewModel(
-    private val pager: Pager<Int, Coin>,
+    pager: Pager<Int, Coin>,
     private val coinRepository: CoinRepository
 ) : ViewModel() {
 
@@ -39,13 +37,28 @@ class CoinListViewModel(
         CoinListState()
     )
 
+
+    init {
+        // Launch a coroutine to refresh data every 10 seconds
+        viewModelScope.launch {
+            while (true) {
+                delay(10_000) // Wait for 10 seconds
+                _state.update {
+                    it.copy(
+                        refreshPaing = true
+                    )
+                }
+            }
+        }
+    }
+
     fun onAction(action: CoinListAction) {
         when (action) {
             is CoinListAction.OnCoinClick -> {
                 loadCoinDetail(action.coinUi)
             }
 
-            is CoinListAction.OnDismiss -> {
+            is CoinListAction.OnDismissCoinDetailBottomUp -> {
                 _state.update {
                     it.copy(
                         showCoinDetail = false
@@ -56,9 +69,7 @@ class CoinListViewModel(
     }
 
     private fun loadCoinDetail(coinUi: CoinUi) {
-        println("shown bottom up: load coin")
         viewModelScope.launch {
-
             _state.update {
                 it.copy(
                     selectedCoin = coinUi,

@@ -27,8 +27,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.su.coinproject.features.coin.domain.Coin
 import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
-import com.su.coinproject.features.coin.presentation.coin_list.model.toCoinUi
-import com.su.coinproject.features.coin.presentation.coin_list.previewCoin
+import com.su.coinproject.features.coin.presentation.coin_list.model.previewCoinUi
 import com.su.coinproject.ui.theme.itemBackgroundColor
 
 @Composable
@@ -95,8 +94,8 @@ fun CoinListItem(
 @Composable
 private fun CoinListItemPreview() {
     CoinListItem(
-        coinUi = previewCoin,
-        onClick = { /*TODO*/ },
+        coinUi = previewCoinUi,
+        onClick = { },
         modifier = Modifier.background(
             MaterialTheme.colorScheme.background
         )

@@ -26,6 +26,8 @@ class CoinListPagingSource(
         return state.anchorPosition?.let { state.closestPageToPosition(it)?.prevKey?.plus(1) }
     }
 
+
+
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Coin> {
         val page = params.key ?: 1
         return try {
