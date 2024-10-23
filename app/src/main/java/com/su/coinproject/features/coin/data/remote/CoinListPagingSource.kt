@@ -4,7 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.su.coinproject.core.data.remote.createApiUrl
 import com.su.coinproject.features.coin.data.mappers.toCoin
-import com.su.coinproject.features.coin.data.remote.dto.CoinListResponseDto
+import com.su.coinproject.features.coin.data.remote.dto.coin_list.CoinListResponseDto
 import com.su.coinproject.features.coin.domain.Coin
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

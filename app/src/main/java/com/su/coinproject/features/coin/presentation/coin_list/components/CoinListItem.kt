@@ -33,7 +33,7 @@ import com.su.coinproject.ui.theme.itemBackgroundColor
 @Composable
 fun CoinListItem(
     coinUi: CoinUi,
-    onClick: () -> Unit = {},
+    onClick: (CoinUi) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val contentColor = Color.Black
@@ -46,7 +46,7 @@ fun CoinListItem(
     ) {
         Row(
             modifier = modifier
-                .clickable(onClick = onClick)
+                .clickable(onClick = {onClick(coinUi)})
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -105,8 +105,10 @@ private fun CoinListItemPreview() {
 internal val previewCoin = Coin(
     id = "bitcoin",
     name = "Bitcoin",
+    color = "#f7931A",
     symbol = "BTC",
     price = 1241273958896.75,
     change = 0.1,
+    marketCap = 1241273958896.54,
     iconUrl = "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg"
 ).toCoinUi()
