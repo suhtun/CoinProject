@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -111,6 +112,7 @@ fun CoinDetailBottomUp(state: CoinListState) {
                             fontWeight = FontWeight.Bold,
                             color = Color.DarkGray
                         )
+                        Spacer(modifier = Modifier.width(10.dp))
                         Text(
                             text = "$ ${coinUi.price.formatted}",
                             fontSize = 12.sp,
@@ -125,8 +127,9 @@ fun CoinDetailBottomUp(state: CoinListState) {
                             fontWeight = FontWeight.Bold,
                             color = Color.DarkGray
                         )
+                        Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = "$ ${coinUi.price.formatted}",
+                            text = "$ ${coinUi.marketCap}",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
                             color = Color.DarkGray

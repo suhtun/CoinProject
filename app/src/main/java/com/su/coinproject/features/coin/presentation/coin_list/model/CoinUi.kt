@@ -1,8 +1,10 @@
 package com.su.coinproject.features.coin.presentation.coin_list.model
 
+import android.icu.text.DecimalFormat
 import android.icu.text.NumberFormat
 import com.su.coinproject.features.coin.domain.Coin
 import java.util.Locale
+import kotlin.math.abs
 
 data class CoinUi(
     val id: String,
@@ -10,19 +12,31 @@ data class CoinUi(
     val symbol: String,
     val iconUrl: String,
     val price: DisplayableNumber,
-    val marketCap: Double,
+    val marketCap: String,
     val change: DisplayableNumber,
     var description: String? = null,
     var websiteUrl: String? = null
 )
 
 val emptyCoinUi =
-    CoinUi("", "", "", "", 0.0.toDisplayableNumber(), 0.0, 0.0.toDisplayableNumber(), "", "")
+    CoinUi("", "", "", "", 0.0.toDisplayableNumber(), "0.0", 0.0.toDisplayableNumber(), "", "")
 
 data class DisplayableNumber(
     val value: Double,
     val formatted: String
 )
+
+fun Double.toDisplayableNumberwithSuffix(): String {
+    val absValue = abs(this)
+    val df = DecimalFormat("#.##")
+
+    return when {
+        absValue >= 1_000_000_000_000 -> "${df.format(this / 1_000_000_000_000)} trillion"
+        absValue >= 1_000_000_000 -> "${df.format(this / 1_000_000_000)} billion"
+        absValue >= 1_000_000 -> "${df.format(this / 1_000_000)} million"
+        else -> df.format(this)
+    }
+}
 
 fun Double.toDisplayableNumber(): DisplayableNumber {
     val formatter = NumberFormat.getNumberInstance(Locale.getDefault()).apply {
@@ -42,7 +56,7 @@ fun Coin.toCoinUi(): CoinUi {
         symbol = symbol,
         iconUrl = iconUrl,
         price = price.toDisplayableNumber(),
-        marketCap = marketCap,
+        marketCap = marketCap.toDisplayableNumberwithSuffix(),
         change = change.toDisplayableNumber(),
     )
 
