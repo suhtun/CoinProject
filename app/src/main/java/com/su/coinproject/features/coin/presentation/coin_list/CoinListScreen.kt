@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,7 +39,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.su.coinproject.core.presentation.util.ObserveAsEvents
+import com.su.coinproject.R
+import com.su.coinproject.core.presentation.components.AppLoadingView
+import com.su.coinproject.core.presentation.components.ErrorMessageView
 import com.su.coinproject.features.coin.domain.Coin
 import com.su.coinproject.features.coin.domain.CoinDetail
 import com.su.coinproject.features.coin.presentation.coin_detail.CoinDetailView
@@ -58,23 +61,66 @@ fun CoinListScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-        ) {
-//        CoinListView(coins = coins) { coin ->
-        Button(modifier = Modifier.align(Alignment.TopCenter).padding(top = 50.dp), onClick = { viewModel.onAction(CoinListAction.OnCoinClick(previewCoin)) }) {
-            Text(text = "Click on ")
-        }
-        
-//        }
+        modifier = modifier
+    ) {
+        LazyColumn(modifier = Modifier.background(Color.White)) {
 
-        println("coil list state: ${state.loadingCoilDetail}")
-        if (state.loadingCoilDetail) {
-            CircularProgressIndicator()
+            item {
+                Text(
+                    text = stringResource(id = R.string.label_coin),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+
+            items(coins.itemCount) { index ->
+                coins[index]?.let { coin ->
+                    CoinListItem(
+                        coin,
+                        onClick = { coinUi ->
+                            viewModel.onAction(CoinListAction.OnCoinClick(coinUi))
+                        })
+                }
+            }
+
+            item {
+                when {
+                    coins.loadState.refresh is LoadState.Loading -> {
+                        AppLoadingView()
+                    }
+
+                    coins.loadState.refresh is LoadState.Error -> {
+                        val e = coins.loadState.refresh as LoadState.Error
+                        ErrorMessageView(message = e.error.message) {
+                            coins.retry()
+                        }
+                    }
+
+                    coins.loadState.append is LoadState.Error -> {
+                        val e = coins.loadState.append as LoadState.Error
+                        ErrorMessageView(message = e.error.message) {
+                            coins.retry()
+                        }
+                    }
+
+                    coins.loadState.append is LoadState.Loading -> {
+                        AppLoadingView()
+                    }
+                }
+            }
         }
+
+
+        if (state.loadingCoilDetail) {
+            AppLoadingView()
+        }
+
         if (state.showCoinDetail) {
             CoinDetailView()
         }
+
     }
 }
 
@@ -89,37 +135,4 @@ internal val previewCoin = Coin(
     iconUrl = "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg",
 ).toCoinUi()
 
-@Composable
-private fun CoinListView(
-    coins: LazyPagingItems<CoinUi>,
-    onClick: (CoinUi) -> Unit
-) {
-    LazyColumn(modifier = Modifier.background(Color.White)) {
-        items(coins.itemCount) { index ->
-            coins[index]?.let { coin ->
-                CoinListItem(coin, onClick = onClick)
-            }
-        }
-
-        when {
-            coins.loadState.refresh is LoadState.Loading -> {
-                // TODO: Show loading spinner for initial load
-            }
-
-            coins.loadState.refresh is LoadState.Error -> {
-                val e = coins.loadState.refresh as LoadState.Error
-                // TODO: Show error message for initial load
-            }
-
-            coins.loadState.append is LoadState.Error -> {
-                val e = coins.loadState.append as LoadState.Error
-                // TODO: Show error message for appending data
-            }
-
-            coins.loadState.append is LoadState.Loading -> {
-                // TODO: Show loading spinner for appending data
-            }
-        }
-    }
-}
 

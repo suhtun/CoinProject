@@ -18,11 +18,11 @@ val appModule = module {
         HttpClientFactory.create(CIO.create())
     }
 
-    factory { CoinListPagingSource(get()) }
+    factory { CoinListPagingSource(get(),get()) }
 
     single {
         Pager(
-            config = PagingConfig(pageSize = 100),
+            config = PagingConfig(pageSize = 20, prefetchDistance = 1, initialLoadSize = 1),
             pagingSourceFactory = { get<CoinListPagingSource>() }
         )
     }

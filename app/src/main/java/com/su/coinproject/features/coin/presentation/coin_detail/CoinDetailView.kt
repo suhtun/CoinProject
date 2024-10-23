@@ -5,19 +5,15 @@ import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -30,35 +26,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.su.coinproject.core.presentation.util.ObserveAsEvents
-import com.su.coinproject.features.coin.domain.Coin
-import com.su.coinproject.features.coin.domain.CoinDetail
-import com.su.coinproject.features.coin.presentation.coin_list.CoinListEvent
-import com.su.coinproject.features.coin.presentation.coin_list.CoinListState
+import com.su.coinproject.core.presentation.components.hexToColor
+import com.su.coinproject.features.coin.presentation.coin_list.CoinListAction
 import com.su.coinproject.features.coin.presentation.coin_list.CoinListViewModel
-import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
-import com.su.coinproject.features.coin.presentation.coin_list.model.toCoinUi
 import com.su.coinproject.ui.theme.blueColor
-import com.su.coinproject.ui.theme.greenColor
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@Composable
-fun CoinDetailView(viewModel: CoinListViewModel = koinViewModel()) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-    CoinDetailBottomUp(state)
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CoinDetailBottomUp(state: CoinListState) {
+fun CoinDetailView(viewModel: CoinListViewModel = koinViewModel()) {
+
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
     val coinUi = state.selectedCoin ?: return
 
     val context = LocalContext.current
@@ -71,7 +60,9 @@ fun CoinDetailBottomUp(state: CoinListState) {
 
     ModalBottomSheet(sheetState = sheetState,
         containerColor = Color.White,
-        onDismissRequest = {}
+        onDismissRequest = {
+            viewModel.onAction(CoinListAction.OnDismiss)
+        }
     ) {
         // Content inside the Bottom Sheet
         Column(
@@ -91,20 +82,30 @@ fun CoinDetailBottomUp(state: CoinListState) {
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Row {
-                        Text(
-                            text = coinUi.name,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black
-                        )
-                        Text(
-                            text = " (${coinUi.symbol})",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Light,
-                            color = Color.Black
-                        )
+                    val styledText = buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Bold, fontSize = 18.sp,
+                                color = coinUi.color?.let { hexToColor(it) } ?: Color.Black
+                            )
+                        ) {
+                            append("${coinUi.name} ")
+                        }
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 16.sp, color = Color.Black
+                            )
+                        ) {
+                            append("(${coinUi.symbol})")
+                        }
                     }
+                    Text(
+                        text = styledText,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
                     Row {
                         Text(
                             text = "PRICE",
@@ -154,7 +155,6 @@ fun CoinDetailBottomUp(state: CoinListState) {
             )
 
             coinUi.websiteUrl?.let { websiteUrl ->
-                println("website url: ${websiteUrl}")
                 Text(text = "GO TO WEBSITE",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
@@ -171,10 +171,9 @@ fun CoinDetailBottomUp(state: CoinListState) {
         }
     }
 
-    // Launch the bottom sheet dialog when showDialog is set to true
-    if(state.showCoinDetail) {
     LaunchedEffect(sheetState) {
-        scope.launch { sheetState.show() }
+        scope.launch {
+            sheetState.show()
         }
     }
 }

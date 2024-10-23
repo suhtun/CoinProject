@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">CoinProject</string>
+    <string name="error_request_timeout">The request timed out.</string>
+    <string name="error_too_many_requests">Oops, it seems like your quota is exceeded.</string>
+    <string name="error_no_internet">Could not connect to server, please check your internet connection.</string>
+    <string name="error_unknown">Something went wrong. Please try again later.</string>
+    <string name="error_serialization">Could not serialize or deserialize data.</string>
+    <string name="error_validation">The request could not be validated. The response should provide more details.</string>
+    <string name="error_coin_not_found">The coin could not be found. Try another coin.</string>
+    <string name="label_try_again">Try again</string>
+    <string name="label_coin">Buy, sell and hold crypto</string>
+    <string name="error_no_data">Could not load data.</string>
 </resources>

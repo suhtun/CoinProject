@@ -40,13 +40,13 @@ fun CoinListItem(
 
     Card(
         modifier = modifier
+            .clickable(onClick = {onClick(coinUi)})
             .padding(8.dp),
         elevation = CardDefaults.cardElevation(6.dp),
         colors = CardDefaults.cardColors(containerColor = itemBackgroundColor)
     ) {
         Row(
             modifier = modifier
-                .clickable(onClick = {onClick(coinUi)})
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)

@@ -39,22 +39,29 @@ class CoinListViewModel(
         CoinListState()
     )
 
-    private val _events = Channel<CoinListEvent>()
-    val events = _events.receiveAsFlow()
-
     fun onAction(action: CoinListAction) {
         when (action) {
             is CoinListAction.OnCoinClick -> {
                 loadCoinDetail(action.coinUi)
             }
+
+            is CoinListAction.OnDismiss -> {
+                _state.update {
+                    it.copy(
+                        showCoinDetail = false
+                    )
+                }
+            }
         }
     }
 
     private fun loadCoinDetail(coinUi: CoinUi) {
-
+        println("shown bottom up: load coin")
         viewModelScope.launch {
+
             _state.update {
                 it.copy(
+                    selectedCoin = coinUi,
                     loadingCoilDetail = true,
                 )
             }
@@ -72,6 +79,7 @@ class CoinListViewModel(
                             loadingCoilDetail = false
                         )
                     }
+
                 }
                 .onError { error ->
                     _state.update {
