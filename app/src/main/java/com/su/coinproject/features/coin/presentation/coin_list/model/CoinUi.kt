@@ -11,10 +11,13 @@ data class CoinUi(
     val iconUrl: String,
     val price: DisplayableNumber,
     val marketCap: Double,
-    val change: DisplayableNumber
+    val change: DisplayableNumber,
+    var description: String? = null,
+    var websiteUrl: String? = null
 )
 
-val emptyCoinUi = CoinUi("","","","",0.0.toDisplayableNumber(),0.0,0.0.toDisplayableNumber())
+val emptyCoinUi =
+    CoinUi("", "", "", "", 0.0.toDisplayableNumber(), 0.0, 0.0.toDisplayableNumber(), "", "")
 
 data class DisplayableNumber(
     val value: Double,
@@ -32,7 +35,7 @@ fun Double.toDisplayableNumber(): DisplayableNumber {
     )
 }
 
-fun Coin.toCoinUi(): CoinUi{
+fun Coin.toCoinUi(): CoinUi {
     return CoinUi(
         id = id,
         name = name,
@@ -40,7 +43,7 @@ fun Coin.toCoinUi(): CoinUi{
         iconUrl = iconUrl,
         price = price.toDisplayableNumber(),
         marketCap = marketCap,
-        change = change.toDisplayableNumber()
+        change = change.toDisplayableNumber(),
     )
 
 }

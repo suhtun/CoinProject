@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -32,22 +34,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.su.coinproject.core.presentation.util.ObserveAsEvents
 import com.su.coinproject.features.coin.domain.Coin
 import com.su.coinproject.features.coin.domain.CoinDetail
 import com.su.coinproject.features.coin.presentation.coin_detail.CoinDetailView
 import com.su.coinproject.features.coin.presentation.coin_list.components.CoinListItem
-import com.su.coinproject.features.coin.presentation.coin_list.components.PriceChange
 import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
 import com.su.coinproject.features.coin.presentation.coin_list.model.emptyCoinUi
 import com.su.coinproject.features.coin.presentation.coin_list.model.toCoinUi
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CoinListScreen(
     modifier: Modifier = Modifier,
@@ -55,44 +55,38 @@ fun CoinListScreen(
 ) {
     val coins: LazyPagingItems<CoinUi> = viewModel.coinListPagingFlow.collectAsLazyPagingItems()
 
-    var coinDetail: CoinUi by remember {
-        mutableStateOf(emptyCoinUi)
-    }
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
-    var showDialog by remember {
-        mutableStateOf(false)
-    }
-
-    Box {
-
-        CoinListView(coins = coins) { coin ->
-            coinDetail = coin
-            showDialog = true
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+        ) {
+//        CoinListView(coins = coins) { coin ->
+        Button(modifier = Modifier.align(Alignment.TopCenter).padding(top = 50.dp), onClick = { viewModel.onAction(CoinListAction.OnCoinClick(previewCoin)) }) {
+            Text(text = "Click on ")
         }
-        if (showDialog) {
-            CoinDetailView(
-                coinUi = coinDetail,
-                coinDetail = CoinDetail(
-                    "Bitcoin is the first decentralized digital currency.",
-                    "https://bitcoin.org"
-                ),
-                showDialog = showDialog
-            ) { status ->
-                showDialog = status
-            }
+        
+//        }
+
+        println("coil list state: ${state.loadingCoilDetail}")
+        if (state.loadingCoilDetail) {
+            CircularProgressIndicator()
+        }
+        if (state.showCoinDetail) {
+            CoinDetailView()
         }
     }
 }
 
 internal val previewCoin = Coin(
-    id = "bitcoin",
+    id = "Qwsogvtv82FCd",
     name = "Bitcoin",
     color = "#f7931A",
     symbol = "BTC",
     price = 1241273958896.75,
     change = 0.1,
     marketCap = 1241273958896.54,
-    iconUrl = "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg"
+    iconUrl = "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg",
 ).toCoinUi()
 
 @Composable
