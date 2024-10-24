@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -37,13 +38,14 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.su.coinproject.R
 import com.su.coinproject.core.presentation.components.AppLoadingView
 import com.su.coinproject.core.presentation.components.ErrorMessageView
+import com.su.coinproject.features.coin.presentation.coin_search.CoinSearchBarView
 import com.su.coinproject.features.coin.presentation.coin_detail.CoinDetailView
 import com.su.coinproject.features.coin.presentation.coin_list.components.CoinListItem
 import com.su.coinproject.features.coin.presentation.coin_list.components.InviteFriendItem
 import com.su.coinproject.features.coin.presentation.coin_list.model.CoinListItemType
 import org.koin.androidx.compose.koinViewModel
 
-const val maxTopBoxSize = 240f
+const val maxTopBoxSize = 260f
 const val minTopBoxSize = 0f
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -85,15 +87,13 @@ fun CoinListScreen(
             }
         }
     }
-    Column(modifier) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
 
-
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(Color.LightGray)
-        )
+        CoinSearchBarView()
 
         Box(
             Modifier.nestedScroll(connection = nestedScrollConnection),
@@ -113,6 +113,13 @@ fun CoinListScreen(
                         .fillMaxWidth()
                         .height(currentImageSize.dp)
                 ) {
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp)
+                            .height(1.dp)
+                            .background(Color.LightGray)
+                    )
                     Text(
                         text = stringResource(id = R.string.label_coin),
                         fontSize = 16.sp,
@@ -189,7 +196,7 @@ fun CoinListScreen(
 
         }
 
-        if (state.loadingCoilDetail) {
+        if (state.isLoading) {
             AppLoadingView()
         }
 
@@ -197,11 +204,11 @@ fun CoinListScreen(
             CoinDetailView()
         }
 
-        LaunchedEffect(coins.loadState.refresh) {
-            if (coins.loadState.refresh !is LoadState.Loading) {
-                isRefreshing = false
-            }
-        }
+//        LaunchedEffect(coins.loadState.refresh) {
+//            if (coins.loadState.refresh !is LoadState.Loading) {
+//                isRefreshing = false
+//            }
+//        }
         //todo: call refresh every 10 sec and pause while error occur(random error occur, need workaround)
 //        if (state.refreshPaing) {
 //            if (!coins.loadState.hasError) {

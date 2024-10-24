@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class CoinDto(
     val uuid: String,
     val name: String,
-    val color: String,
+    val color: String?,
     val symbol: String,
     val iconUrl: String,
     val price: Double,

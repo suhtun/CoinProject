@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import com.su.coinproject.core.presentation.components.SearchBarSample
 import com.su.coinproject.features.coin.presentation.coin_list.CoinListScreen
 import com.su.coinproject.ui.theme.CoinProjectTheme
 
@@ -22,10 +20,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             CoinProjectTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    SearchBarSample(
+                    CoinListScreen(
                         Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
                             .padding(innerPadding)
                     )
                 }

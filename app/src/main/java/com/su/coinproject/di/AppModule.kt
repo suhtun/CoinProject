@@ -1,10 +1,15 @@
 package com.su.coinproject.di
 
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.RemoteMediator
+import com.su.coinproject.core.data.data.AppDatabase
 import com.su.coinproject.core.data.remote.HttpClientFactory
 import com.su.coinproject.features.coin.data.CoinRepositoryImpl
+import com.su.coinproject.features.coin.data.CoinsRemoteMediator
 import com.su.coinproject.features.coin.data.remote.CoinListPagingSource
+import com.su.coinproject.features.coin.presentation.coin_search.CoinSearchBarViewModel
 import com.su.coinproject.features.coin.domain.CoinRepository
 import com.su.coinproject.features.coin.presentation.coin_list.CoinListViewModel
 import io.ktor.client.engine.cio.CIO
@@ -18,7 +23,7 @@ val appModule = module {
         HttpClientFactory.create(CIO.create())
     }
 
-    factory { CoinListPagingSource(get(),get()) }
+    factory { CoinListPagingSource(get(), get()) }
 
     single {
         Pager(
@@ -30,6 +35,10 @@ val appModule = module {
     singleOf(::CoinRepositoryImpl).bind<CoinRepository>()
 
     viewModel {
-        CoinListViewModel(get(),get())
+        CoinListViewModel(get(), get())
+    }
+
+    viewModel {
+        CoinSearchBarViewModel(get())
     }
 }

@@ -9,7 +9,7 @@ sealed class CoinData{
 data class Coin(
     val id: String,
     val name: String,
-    val color:String,
+    val color:String?,
     val symbol: String,
     val iconUrl: String,
     val price: Double,

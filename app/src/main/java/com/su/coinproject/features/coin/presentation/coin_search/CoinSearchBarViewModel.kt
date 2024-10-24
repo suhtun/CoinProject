@@ -1,83 +1,72 @@
-package com.su.coinproject.features.coin.presentation.coin_list
+package com.su.coinproject.features.coin.presentation.coin_search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.cachedIn
-import androidx.paging.map
+import com.su.coinproject.core.domain.util.NetworkError
 import com.su.coinproject.core.domain.util.onError
 import com.su.coinproject.core.domain.util.onSuccess
-import com.su.coinproject.features.coin.data.local.CoinEntity
-import com.su.coinproject.features.coin.domain.CoinData
+import com.su.coinproject.features.coin.domain.Coin
 import com.su.coinproject.features.coin.domain.CoinRepository
-import com.su.coinproject.features.coin.presentation.coin_list.model.CoinListItemType
 import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
 import com.su.coinproject.features.coin.presentation.coin_list.model.toCoinUi
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class CoinListViewModel(
-    pager: Pager<Int, CoinData>,
-    private val coinRepository: CoinRepository,
+class CoinSearchBarViewModel(
+    private val repository: CoinRepository
 ) : ViewModel() {
 
-    var coinListPagingFlow = pager
-        .flow
-        .map { pagingData ->
-            pagingData.map { item ->
-                if (item is CoinData.CoinCard) {
-                    CoinListItemType.CoinUiType(item.coin.toCoinUi())
-                } else
-                    CoinListItemType.InviteFriendType
-
-            }
-        }
-        .cachedIn(viewModelScope)
-
-
-    private val _state = MutableStateFlow(CoinListState())
+    private val _state = MutableStateFlow(CoinSearchBarState())
     val state = _state.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000L),
-        CoinListState()
+        CoinSearchBarState()
     )
 
-
-//todo: need workaround for logic
-//    init {
-//        // Launch a coroutine to refresh data every 10 seconds
-//        viewModelScope.launch {
-//            while (true) {
-//                delay(10_000) // Wait for 10 seconds
-//                _state.update {
-//                    it.copy(
-//                        refreshPaing = true
-//                    )
-//                }
-//            }
-//        }
-//    }
-
-    fun onAction(action: CoinListAction) {
+    fun onAction(action: CoinSearchBarAction) {
         when (action) {
-            is CoinListAction.OnCoinClick -> {
+            is CoinSearchBarAction.OnSearch -> {
+                searchCoins(action.keyword, action.showLoading)
+            }
+
+            is CoinSearchBarAction.OnCoinClick -> {
                 loadCoinDetail(action.coinUi)
             }
+        }
+    }
 
-            is CoinListAction.OnDismissCoinDetailBottomUp -> {
-                _state.update {
-                    it.copy(
-                        showCoinDetail = false
-                    )
-                }
+    private fun searchCoins(keyword: String, showLoading: Boolean) {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    isLoading = showLoading,
+                    isError = null
+                )
             }
+
+            repository
+                .searchCoins(keyword)
+                .onSuccess { coins ->
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            isError = if (coins.isEmpty()) Pair(true, NetworkError.EMPTY_DATA) else null,
+                            coins = coins.map { coin: Coin -> coin.toCoinUi() }
+                        )
+                    }
+
+                }
+                .onError { error ->
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            isError = Pair(true, error)
+                        )
+                    }
+                }
         }
     }
 
@@ -90,7 +79,7 @@ class CoinListViewModel(
                 )
             }
 
-            coinRepository
+            repository
                 .getCoinDetail(coinUi.id)
                 .onSuccess { coinDetail ->
                     _state.update {
@@ -114,4 +103,5 @@ class CoinListViewModel(
                 }
         }
     }
+
 }

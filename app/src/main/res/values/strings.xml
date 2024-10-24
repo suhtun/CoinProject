@@ -10,4 +10,7 @@
     <string name="label_try_again">Try again</string>
     <string name="label_coin">Buy, sell and hold crypto</string>
     <string name="error_no_data">Could not load data.</string>
+    <string name="error_no_result">"No result match this keyword. "</string>
+    <string name="label_sorry">Sorry</string>
+    <string name="error_empty_data">No data.</string>
 </resources>

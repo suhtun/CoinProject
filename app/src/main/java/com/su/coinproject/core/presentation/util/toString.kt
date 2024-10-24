@@ -15,6 +15,7 @@ fun NetworkError.toString(context: Context): String {
         NetworkError.JSON_CONVERT -> R.string.error_serialization
         NetworkError.COIN_NOT_FOUND -> R.string.error_coin_not_found
         NetworkError.VALIDATION_ERROR -> R.string.error_validation
+        NetworkError.EMPTY_DATA -> R.string.error_empty_data
     }
     return context.getString(resId)
 }

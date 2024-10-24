@@ -9,5 +9,6 @@ enum class NetworkError: Error {
     SERIALIZATION,
     COIN_NOT_FOUND,
     VALIDATION_ERROR,
+    EMPTY_DATA,
     UNKNOWN,
 }

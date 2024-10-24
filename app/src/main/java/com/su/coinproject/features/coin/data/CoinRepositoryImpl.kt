@@ -1,11 +1,14 @@
 package com.su.coinproject.features.coin.data
 
 import androidx.compose.ui.geometry.Offset
+import androidx.room.withTransaction
+import com.su.coinproject.core.data.data.AppDatabase
 import com.su.coinproject.core.data.remote.createApiUrl
 import com.su.coinproject.core.data.remote.safeCall
 import com.su.coinproject.core.domain.util.NetworkError
 import com.su.coinproject.core.domain.util.Result
 import com.su.coinproject.core.domain.util.map
+import com.su.coinproject.core.domain.util.onSuccess
 import com.su.coinproject.features.coin.data.mappers.toCoin
 import com.su.coinproject.features.coin.data.mappers.toCoinDetail
 import com.su.coinproject.features.coin.data.remote.dto.coin_detail.CoinDetailResponseDto
@@ -15,10 +18,13 @@ import com.su.coinproject.features.coin.domain.CoinData
 import com.su.coinproject.features.coin.domain.CoinDetail
 import com.su.coinproject.features.coin.domain.CoinRepository
 import com.su.coinproject.features.coin.presentation.coin_list.components.InviteFriendItem
+import com.su.coinproject.features.coin.presentation.coin_list.model.toCoinUi
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 
-class CoinRepositoryImpl(private val httpClient: HttpClient) : CoinRepository {
+class CoinRepositoryImpl(
+    private val httpClient: HttpClient,
+    ) : CoinRepository {
     override suspend fun getCoins(limit: Int, offset: Int): Result<List<Coin>, NetworkError> {
         return safeCall<CoinListResponseDto> {
             httpClient.get(urlString = createApiUrl("/coins?limit=${limit}&offset=${offset}"))
@@ -34,4 +40,13 @@ class CoinRepositoryImpl(private val httpClient: HttpClient) : CoinRepository {
             response.data.coin.toCoinDetail()
         }
     }
+
+    override suspend fun searchCoins(keywords: String): Result<List<Coin>, NetworkError> {
+        return safeCall<CoinListResponseDto> {
+            httpClient.get(urlString = createApiUrl("/coins?search=$keywords"))
+        }.map { response ->
+            response.data.coins.map { it.toCoin() }
+        }
+    }
+
 }
