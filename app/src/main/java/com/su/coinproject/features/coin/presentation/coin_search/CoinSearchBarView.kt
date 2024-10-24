@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isTraversalGroup
@@ -86,7 +87,8 @@ fun CoinSearchBarView(
         SearchBar(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .semantics { traversalIndex = 0f },
+                .semantics { traversalIndex = 0f }
+                .testTag("searchbar"),
             inputField = {
                 SearchBarDefaults.InputField(
                     query = keyword,

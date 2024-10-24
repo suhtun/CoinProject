@@ -27,6 +27,12 @@ android {
         debug {
             buildConfigField("String","BASE_URL", "\"https://api.coinranking.com/v2/\"")
         }
+        create("benchmark") {
+            initWith(buildTypes.getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
+            isDebuggable = false
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(

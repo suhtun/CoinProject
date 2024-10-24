@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -27,7 +28,10 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,7 +52,7 @@ import org.koin.androidx.compose.koinViewModel
 const val maxTopBoxSize = 260f
 const val minTopBoxSize = 0f
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun CoinListScreen(
     modifier: Modifier = Modifier,
@@ -89,6 +93,9 @@ fun CoinListScreen(
     }
     Column(
         Modifier
+            .semantics {
+                testTagsAsResourceId = true
+            }
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
@@ -144,7 +151,8 @@ fun CoinListScreen(
                     columns = GridCells.Fixed(columns),
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = currentImageSize.dp),
+                        .padding(top = currentImageSize.dp)
+                        .testTag("coin_list"),
                 ) {
                     items(coins.itemCount) { index ->
                         coins[index]?.let { coinData ->
