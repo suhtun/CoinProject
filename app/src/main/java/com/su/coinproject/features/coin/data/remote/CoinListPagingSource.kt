@@ -12,12 +12,13 @@ import com.su.coinproject.core.presentation.util.toString
 import com.su.coinproject.features.coin.data.mappers.toCoin
 import com.su.coinproject.features.coin.data.remote.dto.coin_list.CoinListResponseDto
 import com.su.coinproject.features.coin.domain.Coin
+import com.su.coinproject.features.coin.domain.CoinRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 
 class CoinListPagingSource(
     private val context: Context,
-    private val httpClient: HttpClient
+    private val repository: CoinRepository
 ) : PagingSource<Int, Coin>() {
 
     private val limitCoins = 10
@@ -27,20 +28,16 @@ class CoinListPagingSource(
     }
 
 
-
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Coin> {
         val page = params.key ?: 1
         return try {
             var coins: List<Coin> = emptyList()
-            safeCall<CoinListResponseDto> {
-                httpClient.get(urlString = createApiUrl("/coins?limit=${limitCoins}&offset=${page * limitCoins}"))
-            }.map { response ->
-                response.data.coins.map { it.toCoin() }
-            }.onSuccess { loadedCoins ->
-                coins = loadedCoins
-            }.onError { error ->
-                throw CustomPagingException(error.toString(context))
-            }
+            repository.getCoins(limitCoins, (page * limitCoins))
+                .onSuccess { loadedCoins ->
+                    coins = loadedCoins
+                }.onError { error ->
+                    throw CustomPagingException(error.toString(context))
+                }
 
             LoadResult.Page(
                 data = coins,

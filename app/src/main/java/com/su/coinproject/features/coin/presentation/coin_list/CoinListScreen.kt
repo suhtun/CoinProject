@@ -44,13 +44,6 @@ fun CoinListScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    //call refresh every 10 sec and pause while error occur
-    if (state.refreshPaing) {
-        if (!coins.loadState.hasError) {
-            coins.refresh()
-        }
-    }
-
     var isRefreshing by remember { mutableStateOf(false) }
 
     Box(
@@ -137,6 +130,13 @@ fun CoinListScreen(
         LaunchedEffect(coins.loadState.refresh) {
             if (coins.loadState.refresh !is LoadState.Loading) {
                 isRefreshing = false
+            }
+        }
+
+        //call refresh every 10 sec and pause while error occur
+        if (state.refreshPaing) {
+            if (!coins.loadState.hasError) {
+                coins.refresh()
             }
         }
     }

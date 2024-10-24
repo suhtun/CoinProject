@@ -33,15 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import com.su.coinproject.R
-import com.su.coinproject.core.presentation.components.hexToColor
-import com.su.coinproject.features.coin.domain.Coin
-import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
-import com.su.coinproject.features.coin.presentation.coin_list.model.toCoinUi
-import com.su.coinproject.features.coin.presentation.coin_list.previewCoin
 import com.su.coinproject.ui.theme.blueColor
-import com.su.coinproject.ui.theme.itemBackgroundColor
 import com.su.coinproject.ui.theme.lightBlueColor
 
 @Composable
