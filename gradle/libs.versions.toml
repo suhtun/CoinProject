@@ -58,7 +58,7 @@ compose = [
     "androidx-activity-compose",
     "lifecycle-runtime-compose",
     "lifecycle-viewmodel-compose",
-    "androidx-material3",
+#    "androidx-material3",
     "androidx-ui",
     "androidx-ui-graphics",
     "androidx-ui-tooling-preview",

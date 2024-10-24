@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.su.coinproject"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.su.coinproject"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -66,6 +66,8 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.ktor)
+
+    implementation("androidx.compose.material3:material3:1.4.0-alpha02")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
