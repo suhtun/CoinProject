@@ -37,7 +37,6 @@ import com.su.coinproject.features.coin.domain.Coin
 import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
 import com.su.coinproject.features.coin.presentation.coin_list.model.toCoinUi
 import com.su.coinproject.ui.theme.CoinProjectTheme
-import com.su.coinproject.ui.theme.itemBackgroundColor
 
 @Composable
 fun TopRankCoinItem(
@@ -45,14 +44,23 @@ fun TopRankCoinItem(
     onClick: (CoinUi) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val contentColor = Color.Black
+    val primaryFontColor  = if(isSystemInDarkTheme()) {
+        Color.White
+    } else {
+        Color.Black
+    }
+
+    val secondaryFontColor  = if(isSystemInDarkTheme()) {
+        Color.LightGray
+    } else {
+        Color.DarkGray
+    }
 
     Card(
         modifier = modifier
             .widthIn(min = 105.dp, max = 180.dp)
             .clickable(onClick = { onClick(coinUi) }),
         elevation = CardDefaults.cardElevation(6.dp),
-        colors = CardDefaults.cardColors(containerColor = itemBackgroundColor)
     ) {
         Column(
             modifier = modifier
@@ -66,7 +74,7 @@ fun TopRankCoinItem(
                 text = coinUi.symbol,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = contentColor
+                color = primaryFontColor
             )
             Text(
                 text = coinUi.name,
@@ -74,7 +82,7 @@ fun TopRankCoinItem(
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.DarkGray,
+                color = secondaryFontColor,
                 modifier = Modifier
                     .width(80.dp)
                     .align(Alignment.CenterHorizontally)

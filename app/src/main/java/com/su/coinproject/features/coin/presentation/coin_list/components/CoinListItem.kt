@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,19 +17,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import com.su.coinproject.R
 import com.su.coinproject.core.presentation.components.AppAsyncImage
-import com.su.coinproject.features.coin.domain.Coin
 import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
 import com.su.coinproject.features.coin.presentation.coin_list.model.previewCoinUi
-import com.su.coinproject.ui.theme.itemBackgroundColor
 
 @Composable
 fun CoinListItem(
@@ -39,14 +31,23 @@ fun CoinListItem(
     onClick: (CoinUi) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val contentColor = Color.Black
+    val primaryFontColor  = if(isSystemInDarkTheme()) {
+        Color.White
+    } else {
+        Color.Black
+    }
+
+    val secondaryFontColor  = if(isSystemInDarkTheme()) {
+        Color.LightGray
+    } else {
+        Color.DarkGray
+    }
 
     Card(
-        modifier = modifier
+        modifier = Modifier
             .clickable(onClick = { onClick(coinUi) })
             .padding(8.dp),
         elevation = CardDefaults.cardElevation(6.dp),
-        colors = CardDefaults.cardColors(containerColor = itemBackgroundColor)
     ) {
         Row(
             modifier = modifier
@@ -62,13 +63,13 @@ fun CoinListItem(
                     text = coinUi.name,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = contentColor
+                    color = primaryFontColor
                 )
                 Text(
                     text = coinUi.symbol,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.DarkGray
+                    color =secondaryFontColor
                 )
             }
             Column(
@@ -78,7 +79,7 @@ fun CoinListItem(
                     text = "$${coinUi.price.formatted}",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = contentColor
+                    color = primaryFontColor
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 PriceChange(

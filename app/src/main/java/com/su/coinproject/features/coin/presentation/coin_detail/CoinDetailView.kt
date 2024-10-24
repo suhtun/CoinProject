@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -57,8 +58,19 @@ fun CoinDetailView(viewModel: CoinListViewModel = koinViewModel()) {
     // State for the Bottom Sheet dialog visibility
     val sheetState = rememberModalBottomSheetState()
 
+    val primaryFontColor  = if(isSystemInDarkTheme()) {
+        Color.White
+    } else {
+        Color.Black
+    }
+
+    val secondaryFontColor  = if(isSystemInDarkTheme()) {
+        Color.LightGray
+    } else {
+        Color.DarkGray
+    }
+
     ModalBottomSheet(sheetState = sheetState,
-        containerColor = Color.White,
         onDismissRequest = {
             viewModel.onAction(CoinListAction.OnDismissCoinDetailBottomUp)
         }
@@ -85,7 +97,7 @@ fun CoinDetailView(viewModel: CoinListViewModel = koinViewModel()) {
                         withStyle(
                             style = SpanStyle(
                                 fontWeight = FontWeight.Bold, fontSize = 18.sp,
-                                color = coinUi.color?.let { hexToColor(it) } ?: Color.Black
+                                color = coinUi.color?.let { hexToColor(it) } ?: primaryFontColor
                             )
                         ) {
                             append("${coinUi.name} ")
@@ -93,7 +105,7 @@ fun CoinDetailView(viewModel: CoinListViewModel = koinViewModel()) {
                         withStyle(
                             style = SpanStyle(
                                 fontWeight = FontWeight.Normal,
-                                fontSize = 16.sp, color = Color.Black
+                                fontSize = 16.sp, color = primaryFontColor
                             )
                         ) {
                             append("(${coinUi.symbol})")
@@ -103,21 +115,20 @@ fun CoinDetailView(viewModel: CoinListViewModel = koinViewModel()) {
                         text = styledText,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
                     )
                     Row {
                         Text(
                             text = "PRICE",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.DarkGray
+                            color = primaryFontColor
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
                             text = "$ ${coinUi.price.formatted}",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
-                            color = Color.DarkGray
+                            color = secondaryFontColor
                         )
                     }
                     Row {
@@ -125,14 +136,14 @@ fun CoinDetailView(viewModel: CoinListViewModel = koinViewModel()) {
                             text = "MARKET CAP",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.DarkGray
+                            color = primaryFontColor
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
                             text = "$ ${coinUi.marketCap}",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
-                            color = Color.DarkGray
+                            color = secondaryFontColor
                         )
                     }
                 }
@@ -142,7 +153,7 @@ fun CoinDetailView(viewModel: CoinListViewModel = koinViewModel()) {
                 text = coinUi.description ?: "No description",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
-                color = Color.DarkGray,
+                color = secondaryFontColor,
                 modifier = Modifier.padding(16.dp)
             )
 
