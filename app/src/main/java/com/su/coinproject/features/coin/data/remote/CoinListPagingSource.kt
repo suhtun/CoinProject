@@ -3,38 +3,44 @@ package com.su.coinproject.features.coin.data.remote
 import android.content.Context
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.su.coinproject.core.data.remote.createApiUrl
-import com.su.coinproject.core.data.remote.safeCall
-import com.su.coinproject.core.domain.util.map
 import com.su.coinproject.core.domain.util.onError
 import com.su.coinproject.core.domain.util.onSuccess
 import com.su.coinproject.core.presentation.util.toString
-import com.su.coinproject.features.coin.data.mappers.toCoin
-import com.su.coinproject.features.coin.data.remote.dto.coin_list.CoinListResponseDto
-import com.su.coinproject.features.coin.domain.Coin
+import com.su.coinproject.features.coin.domain.CoinData
 import com.su.coinproject.features.coin.domain.CoinRepository
-import io.ktor.client.HttpClient
-import io.ktor.client.request.get
 
 class CoinListPagingSource(
     private val context: Context,
     private val repository: CoinRepository
-) : PagingSource<Int, Coin>() {
+) : PagingSource<Int, CoinData>() {
 
     private val limitCoins = 10
+    private var calculatedInviteFriendIndex = 5
+    private var inviteFriendCount = 0
 
-    override fun getRefreshKey(state: PagingState<Int, Coin>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, CoinData>): Int? {
         return state.anchorPosition?.let { state.closestPageToPosition(it)?.prevKey?.plus(1) }
     }
 
-
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Coin> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CoinData> {
         val page = params.key ?: 1
         return try {
-            var coins: List<Coin> = emptyList()
+            var coins = mutableListOf<CoinData>()
             repository.getCoins(limitCoins, (page * limitCoins))
                 .onSuccess { loadedCoins ->
-                    coins = loadedCoins
+                    loadedCoins.mapIndexed { index, coin ->
+                        val calculateCurrentIndex =
+                            if (page == 1) (index + 1) else (index) + ((page - 1) * limitCoins)
+                        val newInviteCardIndex = (calculatedInviteFriendIndex-inviteFriendCount) + (page - 1)
+
+                        if (newInviteCardIndex== calculateCurrentIndex) {
+                            coins.add(CoinData.InviteFriendCard)
+                            coins.add(CoinData.CoinCard(coin))
+                            inviteFriendCount++
+                            calculatedInviteFriendIndex = (calculateCurrentIndex * 2)
+                        } else
+                            coins.add(CoinData.CoinCard(coin))
+                    }
                 }.onError { error ->
                     throw CustomPagingException(error.toString(context))
                 }
@@ -51,17 +57,3 @@ class CoinListPagingSource(
 }
 
 class CustomPagingException(message: String) : Exception(message)
-
-internal val simpleCoins = List(10) {
-    Coin(
-        id = "bitcoin",
-        name = "Bitcoin",
-        color = "#f7931A",
-        symbol = "BTC",
-        price = 1241273958896.75,
-        change = 0.1,
-        marketCap = 1241273958896.54,
-        iconUrl = "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg",
-        rank = 2
-    )
-}

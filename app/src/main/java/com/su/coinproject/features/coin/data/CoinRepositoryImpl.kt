@@ -11,8 +11,10 @@ import com.su.coinproject.features.coin.data.mappers.toCoinDetail
 import com.su.coinproject.features.coin.data.remote.dto.coin_detail.CoinDetailResponseDto
 import com.su.coinproject.features.coin.data.remote.dto.coin_list.CoinListResponseDto
 import com.su.coinproject.features.coin.domain.Coin
+import com.su.coinproject.features.coin.domain.CoinData
 import com.su.coinproject.features.coin.domain.CoinDetail
 import com.su.coinproject.features.coin.domain.CoinRepository
+import com.su.coinproject.features.coin.presentation.coin_list.components.InviteFriendItem
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 

@@ -1,5 +1,11 @@
 package com.su.coinproject.features.coin.domain
 
+
+sealed class CoinData{
+    data class CoinCard(val coin: Coin) : CoinData()
+    data object InviteFriendCard: CoinData()
+}
+
 data class Coin(
     val id: String,
     val name: String,

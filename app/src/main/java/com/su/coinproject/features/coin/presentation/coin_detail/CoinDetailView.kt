@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.su.coinproject.core.presentation.components.AppAsyncImage
 import com.su.coinproject.core.presentation.components.hexToColor
 import com.su.coinproject.features.coin.presentation.coin_list.CoinListAction
 import com.su.coinproject.features.coin.presentation.coin_list.CoinListViewModel
@@ -72,10 +73,10 @@ fun CoinDetailView(viewModel: CoinListViewModel = koinViewModel()) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                AsyncImage(
-                    model = coinUi.iconUrl,
-                    contentDescription = coinUi.name,
-                    modifier = Modifier.size(50.dp)
+                AppAsyncImage(
+                    modifier = Modifier.size(50.dp),
+                    url = coinUi.iconUrl,
+                    name = coinUi.name
                 )
                 Column(
                     modifier = Modifier.weight(1f)

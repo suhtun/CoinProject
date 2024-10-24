@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,6 +31,8 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.su.coinproject.R
+import com.su.coinproject.core.presentation.components.AppAsyncImage
 import com.su.coinproject.features.coin.domain.Coin
 import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
 import com.su.coinproject.features.coin.presentation.coin_list.model.toCoinUi
@@ -57,11 +60,7 @@ fun TopRankCoinItem(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            AsyncImage(
-                model = coinUi.iconUrl,
-                contentDescription = coinUi.name,
-                modifier = Modifier.size(40.dp)
-            )
+            AppAsyncImage(url = coinUi.iconUrl, name = coinUi.name)
 
             Text(
                 text = coinUi.symbol,
@@ -76,7 +75,9 @@ fun TopRankCoinItem(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.DarkGray,
-                modifier = Modifier.width(80.dp).align(Alignment.CenterHorizontally)
+                modifier = Modifier
+                    .width(80.dp)
+                    .align(Alignment.CenterHorizontally)
             )
 
             PriceChange(

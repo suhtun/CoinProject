@@ -19,12 +19,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.su.coinproject.R
+import com.su.coinproject.core.presentation.components.AppAsyncImage
 import com.su.coinproject.features.coin.domain.Coin
 import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
 import com.su.coinproject.features.coin.presentation.coin_list.model.previewCoinUi
@@ -40,7 +43,7 @@ fun CoinListItem(
 
     Card(
         modifier = modifier
-            .clickable(onClick = {onClick(coinUi)})
+            .clickable(onClick = { onClick(coinUi) })
             .padding(8.dp),
         elevation = CardDefaults.cardElevation(6.dp),
         colors = CardDefaults.cardColors(containerColor = itemBackgroundColor)
@@ -51,11 +54,7 @@ fun CoinListItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            AsyncImage(
-                model = coinUi.iconUrl,
-                contentDescription = coinUi.name,
-                modifier = Modifier.size(40.dp)
-            )
+            AppAsyncImage(url = coinUi.iconUrl, name = coinUi.name)
             Column(
                 modifier = Modifier.weight(1f)
             ) {
