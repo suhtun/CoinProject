@@ -14,19 +14,25 @@ lifecycle = "2.8.6"
 ktor = "2.3.12"
 koin = "3.5.6"
 material3 = "1.4.0-alpha02"
+mockitoAndroid = "4.0.0"
 paging = "3.3.2"
 roomKtx = "2.6.1"
+runner = "1.6.2"
+turbine = "0.12.1"
 uiautomator = "2.3.0"
 benchmarkMacroJunit4 = "1.3.0"
+junitKtx = "1.2.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomKtx" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "roomKtx" }
+androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -55,10 +61,13 @@ lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-
 coil-compose = {group="io.coil-kt",name="coil-compose", version="2.6.0"}
 
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockitoAndroid" }
 paging-runtime = {group="androidx.paging", name="paging-runtime", version.ref ="paging"}
 paging-compose = {group="androidx.paging", name="paging-compose", version.ref="paging"}
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

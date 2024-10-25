@@ -11,6 +11,7 @@ import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
 import com.su.coinproject.features.coin.presentation.coin_list.model.toCoinUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -26,6 +27,9 @@ class CoinSearchBarViewModel(
         CoinSearchBarState()
     )
 
+    private val _stateFlow = MutableStateFlow(0)
+    val stateFlow = _stateFlow.asStateFlow()
+
     fun onAction(action: CoinSearchBarAction) {
         when (action) {
             is CoinSearchBarAction.OnSearch -> {
@@ -38,7 +42,7 @@ class CoinSearchBarViewModel(
         }
     }
 
-    private fun searchCoins(keyword: String, showLoading: Boolean) {
+    fun searchCoins(keyword: String, showLoading: Boolean) {
         viewModelScope.launch {
             _state.update {
                 it.copy(

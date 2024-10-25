@@ -1,4 +1,4 @@
-package com.su.coinproject.util
+package com.su.coinproject.core.data.util
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

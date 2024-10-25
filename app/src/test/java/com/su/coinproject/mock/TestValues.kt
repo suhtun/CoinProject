@@ -1,9 +1,23 @@
 package com.su.coinproject.mock
 
+import com.su.coinproject.features.coin.data.remote.dto.coin_detail.CoinDetailDto
+import com.su.coinproject.features.coin.data.remote.dto.coin_list.CoinDto
 import com.su.coinproject.features.coin.domain.Coin
-import com.su.coinproject.features.coin.presentation.coin_list.model.toCoinUi
+import com.su.coinproject.features.coin.domain.CoinDetail
 
-val searchCoin = Coin(
+val testcoinDtoValue = CoinDto(
+    uuid = "Qwsogvtv82FCd",
+    name = "Bitcoin",
+    color = "#f7931A",
+    symbol = "BTC",
+    price = 66581.76619947565,
+    change = -0.50,
+    rank = 1,
+    marketCap = 1316447357302.0,
+    iconUrl = "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg"
+)
+
+val testCoinValue = Coin(
     id = "Qwsogvtv82FCd",
     name = "Bitcoin",
     color = "#f7931A",
@@ -15,17 +29,15 @@ val searchCoin = Coin(
     iconUrl = "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg"
 )
 
-val searchCoinUi = Coin(
-    id = "Qwsogvtv82FCd",
-    name = "Bitcoin",
-    color = "#f7931A",
-    symbol = "BTC",
-    price = 66581.76619947565,
-    change = -0.50,
-    rank = 1,
-    marketCap = 1316447357302.0,
-    iconUrl = "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg"
-).toCoinUi()
+val mockCoinDetailDtoValue = CoinDetailDto(
+    description = "TON was designed in 2018 by the Durov brothers for fast transactions, and is now supported by the open TON Community.",
+    websiteUrl = "https://ton.org/"
+)
+
+val mockCoinDetailValue = CoinDetail(
+    description = "TON was designed in 2018 by the Durov brothers for fast transactions, and is now supported by the open TON Community.",
+    websiteUrl = "https://ton.org/"
+)
 
 val mockCoinDetailResponse = """
     {
