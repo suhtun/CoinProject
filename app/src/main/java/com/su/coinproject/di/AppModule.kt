@@ -1,13 +1,9 @@
 package com.su.coinproject.di
 
-import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import androidx.paging.RemoteMediator
-import com.su.coinproject.core.data.data.AppDatabase
 import com.su.coinproject.core.data.remote.HttpClientFactory
 import com.su.coinproject.features.coin.data.CoinRepositoryImpl
-import com.su.coinproject.features.coin.data.CoinsRemoteMediator
 import com.su.coinproject.features.coin.data.remote.CoinListPagingSource
 import com.su.coinproject.features.coin.presentation.coin_search.CoinSearchBarViewModel
 import com.su.coinproject.features.coin.domain.CoinRepository

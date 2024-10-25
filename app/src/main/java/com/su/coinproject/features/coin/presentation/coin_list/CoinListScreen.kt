@@ -211,17 +211,6 @@ fun CoinListScreen(
         if (state.showCoinDetail) {
             CoinDetailView()
         }
-
-//        LaunchedEffect(coins.loadState.refresh) {
-//            if (coins.loadState.refresh !is LoadState.Loading) {
-//                isRefreshing = false
-//            }
-//        }
-        //todo: call refresh every 10 sec and pause while error occur(random error occur, need workaround)
-//        if (state.refreshPaing) {
-//            if (!coins.loadState.hasError) {
-//                coins.refresh()
-//            }
     }
 }
 

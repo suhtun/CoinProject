@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
-    id("kotlin-kapt")
 }
 
 android {
@@ -76,12 +75,6 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.ktor)
-
-    // Room
-    implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.junit.ktx)
-    kapt(libs.androidx.room.compiler)
-    implementation(libs.androidx.room.paging)
     implementation(libs.gson)
 
     testImplementation(libs.turbine)
@@ -93,9 +86,5 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-    // Mockito for Android Instrumented tests
-    androidTestImplementation(libs.mockito.android)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
 
 }

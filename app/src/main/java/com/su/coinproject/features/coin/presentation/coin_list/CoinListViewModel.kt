@@ -7,7 +7,6 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.su.coinproject.core.domain.util.onError
 import com.su.coinproject.core.domain.util.onSuccess
-import com.su.coinproject.features.coin.data.local.CoinEntity
 import com.su.coinproject.features.coin.domain.CoinData
 import com.su.coinproject.features.coin.domain.CoinRepository
 import com.su.coinproject.features.coin.presentation.coin_list.model.CoinListItemType

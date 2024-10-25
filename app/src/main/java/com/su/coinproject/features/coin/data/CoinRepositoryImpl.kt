@@ -1,8 +1,5 @@
 package com.su.coinproject.features.coin.data
 
-import androidx.compose.ui.geometry.Offset
-import androidx.room.withTransaction
-import com.su.coinproject.core.data.data.AppDatabase
 import com.su.coinproject.core.data.remote.createApiUrl
 import com.su.coinproject.core.data.remote.safeCall
 import com.su.coinproject.core.domain.util.NetworkError
