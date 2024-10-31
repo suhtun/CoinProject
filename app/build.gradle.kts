@@ -76,6 +76,7 @@ dependencies {
     implementation(libs.bundles.koin)
     implementation(libs.bundles.ktor)
     implementation(libs.gson)
+    implementation("io.coil-kt:coil-svg:2.4.0")
 
     testImplementation(libs.turbine)
     androidTestImplementation(libs.turbine)

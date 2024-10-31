@@ -1,6 +1,7 @@
 package com.su.coinproject.core.data.remote
 
 import com.su.coinproject.core.domain.util.NetworkError
+import com.su.coinproject.core.domain.util.PagingException
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.ensureActive
 import kotlinx.serialization.SerializationException

@@ -11,11 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +47,7 @@ import com.su.coinproject.features.coin.presentation.coin_detail.CoinDetailView
 import com.su.coinproject.features.coin.presentation.coin_list.components.CoinListItem
 import com.su.coinproject.features.coin.presentation.coin_list.components.InviteFriendItem
 import com.su.coinproject.features.coin.presentation.coin_list.model.CoinListItemType
+import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
 import org.koin.androidx.compose.koinViewModel
 
 const val maxTopBoxSize = 260f
@@ -58,7 +59,7 @@ fun CoinListScreen(
     modifier: Modifier = Modifier,
     viewModel: CoinListViewModel = koinViewModel()
 ) {
-    val coins: LazyPagingItems<CoinListItemType> =
+    val coins: LazyPagingItems<CoinUi> =
         viewModel.coinListPagingFlow.collectAsLazyPagingItems()
 
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -111,9 +112,7 @@ fun CoinListScreen(
                     coins.refresh() // Refresh the LazyPagingItems
                 }) {
 
-                val topRanks =
-                    coins.itemSnapshotList.items.filterIsInstance<CoinListItemType.CoinUiType>()
-                        .sortedByDescending { it.coinUi.rank }.take(3)
+                val topRanks = coins.itemSnapshotList.sortedByDescending { it?.rank }.take(3)
 
                 Column(
                     Modifier
@@ -133,7 +132,9 @@ fun CoinListScreen(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(16.dp)
                     )
-                    TopRankCoinListView(coins = topRanks.map { it.coinUi })
+                    TopRankCoinListView(coins = topRanks)
+
+
                 }
 
                 val configuration = LocalConfiguration.current
@@ -155,22 +156,12 @@ fun CoinListScreen(
                         .testTag("coin_list"),
                 ) {
                     items(coins.itemCount) { index ->
-                        coins[index]?.let { coinData ->
-                            when (coinData) {
-                                is CoinListItemType.CoinUiType -> {
-                                    if (topRanks.any { it.coinUi.id != coinData.coinUi.id }) {
-                                        CoinListItem(
-                                            coinData.coinUi,
-                                            onClick = { coinUi ->
-                                                viewModel.onAction(CoinListAction.OnCoinClick(coinUi))
-                                            })
-                                    }
-                                }
-
-                                CoinListItemType.InviteFriendType -> {
-                                    InviteFriendItem()
-                                }
-                            }
+                        coins[index]?.let { coinUi ->
+                            CoinListItem(
+                                coinUi,
+                                onClick = { coin ->
+                                    viewModel.onAction(CoinListAction.OnCoinClick(coin))
+                                })
                         }
                     }
 

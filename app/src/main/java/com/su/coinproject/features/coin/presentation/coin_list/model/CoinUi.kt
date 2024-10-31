@@ -20,6 +20,18 @@ data class CoinUi(
     var websiteUrl: String? = null
 )
 
+internal val previewCoin = Coin(
+    id = "bitcoin",
+    name = "Bitcoin",
+    color = "#f7931A",
+    symbol = "BTC",
+    price = 1241273958896.75,
+    change = 0.1,
+    rank = 1,
+    marketCap = 1241273958896.54,
+    iconUrl = "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg"
+)
+
 internal val previewCoinUi = Coin(
     id = "bitcoin",
     name = "Bitcoin",

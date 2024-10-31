@@ -7,23 +7,19 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.su.coinproject.core.domain.util.onError
 import com.su.coinproject.core.domain.util.onSuccess
-import com.su.coinproject.features.coin.domain.CoinData
+import com.su.coinproject.features.coin.domain.Coin
 import com.su.coinproject.features.coin.domain.CoinRepository
-import com.su.coinproject.features.coin.presentation.coin_list.model.CoinListItemType
 import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
 import com.su.coinproject.features.coin.presentation.coin_list.model.toCoinUi
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CoinListViewModel(
-    pager: Pager<Int, CoinData>,
+    pager: Pager<Int, Coin>,
     private val coinRepository: CoinRepository,
 ) : ViewModel() {
 
@@ -31,10 +27,7 @@ class CoinListViewModel(
         .flow
         .map { pagingData ->
             pagingData.map { item ->
-                if (item is CoinData.CoinCard) {
-                    CoinListItemType.CoinUiType(item.coin.toCoinUi())
-                } else
-                    CoinListItemType.InviteFriendType
+                item.toCoinUi()
 
             }
         }
@@ -47,22 +40,6 @@ class CoinListViewModel(
         SharingStarted.WhileSubscribed(5000L),
         CoinListState()
     )
-
-
-//todo: need workaround for logic
-//    init {
-//        // Launch a coroutine to refresh data every 10 seconds
-//        viewModelScope.launch {
-//            while (true) {
-//                delay(10_000) // Wait for 10 seconds
-//                _state.update {
-//                    it.copy(
-//                        refreshPaing = true
-//                    )
-//                }
-//            }
-//        }
-//    }
 
     fun onAction(action: CoinListAction) {
         when (action) {

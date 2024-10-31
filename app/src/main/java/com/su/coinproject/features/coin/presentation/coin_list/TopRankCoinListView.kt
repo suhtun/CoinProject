@@ -19,7 +19,7 @@ import com.su.coinproject.features.coin.presentation.coin_list.model.previewCoin
 import com.su.coinproject.ui.theme.CoinProjectTheme
 
 @Composable
-fun TopRankCoinListView(coins: List<CoinUi>) {
+fun TopRankCoinListView(coins: List<CoinUi?>) {
 //    Row (
 //        modifier = Modifier
 //            .fillMaxWidth()
@@ -36,7 +36,7 @@ fun TopRankCoinListView(coins: List<CoinUi>) {
         horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)
     ) {
         repeat(coins.size) { index ->
-            TopRankCoinItem(coinUi = coins[index])
+            coins[index]?.let { TopRankCoinItem(coinUi = it) }
         }
     }
 }

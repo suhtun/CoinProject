@@ -1,5 +1,6 @@
 package com.su.coinproject.features.coin.presentation.coin_list.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
@@ -22,7 +24,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -42,15 +46,16 @@ import com.su.coinproject.ui.theme.CoinProjectTheme
 fun TopRankCoinItem(
     coinUi: CoinUi,
     onClick: (CoinUi) -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
 ) {
-    val primaryFontColor  = if(isSystemInDarkTheme()) {
+    val primaryFontColor = if (isSystemInDarkTheme()) {
         Color.White
     } else {
         Color.Black
     }
 
-    val secondaryFontColor  = if(isSystemInDarkTheme()) {
+    val secondaryFontColor = if (isSystemInDarkTheme()) {
         Color.LightGray
     } else {
         Color.DarkGray
@@ -61,10 +66,14 @@ fun TopRankCoinItem(
             .widthIn(min = 105.dp, max = 180.dp)
             .clickable(onClick = { onClick(coinUi) }),
         elevation = CardDefaults.cardElevation(6.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            contentColor = contentColor
+        )
     ) {
         Column(
             modifier = modifier
-                .padding(12.dp),
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {

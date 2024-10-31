@@ -1,5 +1,8 @@
 package com.su.coinproject.core.domain.util
 
+import java.lang.Exception
+import kotlin.Throwable
+
 enum class NetworkError: Error {
     REQUEST_TIMEOUT,
     TOO_MANY_REQUESTS,
@@ -12,3 +15,5 @@ enum class NetworkError: Error {
     EMPTY_DATA,
     UNKNOWN,
 }
+
+class PagingException(exception: Exception): Error
