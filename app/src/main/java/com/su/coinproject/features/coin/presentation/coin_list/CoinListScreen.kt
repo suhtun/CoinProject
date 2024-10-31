@@ -98,7 +98,7 @@ fun CoinListScreen(
                 testTagsAsResourceId = true
             }
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+//            .background(MaterialTheme.colorScheme.background)
     ) {
 
         CoinSearchBarView()
