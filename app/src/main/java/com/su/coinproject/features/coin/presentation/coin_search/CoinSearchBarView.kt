@@ -162,7 +162,7 @@ fun CoinSearchBarView(
                     ) {
                         items(coins.size) { index ->
                             CoinListItem(
-                                coins[index]
+                                coinUi = coins[index]
                             )
 
                         }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,9 +33,9 @@ import com.su.coinproject.features.coin.presentation.coin_list.model.previewCoin
 
 @Composable
 fun CoinListItem(
+    modifier: Modifier = Modifier,
     coinUi: CoinUi,
     onClick: (CoinUi) -> Unit = {},
-    modifier: Modifier = Modifier,
 ) {
     val primaryFontColor = if (isSystemInDarkTheme()) {
         Color.White
@@ -63,7 +64,8 @@ fun CoinListItem(
 //            contentColor = contentColor
 //        ),
     Box(
-        Modifier
+        modifier
+            .fillMaxWidth()
             .padding(top = 8.dp, start = 8.dp, end = 8.dp)
             .clickable { onClick(coinUi) }) {
         Row(

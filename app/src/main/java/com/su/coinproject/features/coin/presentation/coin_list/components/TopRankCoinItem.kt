@@ -109,7 +109,7 @@ fun TopRankCoinItem(
 private fun CoinListItemPreview() {
     CoinProjectTheme {
 
-        TopRankCoinItem(
+        TopRankCoinHorizontalItem(
             coinUi = previewTopCoin,
             onClick = { /*TODO*/ },
             modifier = Modifier.background(
@@ -120,6 +120,50 @@ private fun CoinListItemPreview() {
 
 }
 
+@Composable
+fun TopRankCoinHorizontalItem(
+    coinUi: CoinUi,
+    onClick: (CoinUi) -> Unit = {},
+    modifier: Modifier = Modifier,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
+) {
+    val primaryFontColor = if (isSystemInDarkTheme()) {
+        Color.White
+    } else {
+        Color.White
+    }
+
+    Card(
+        modifier = modifier
+            .widthIn(min = 105.dp, max = 180.dp)
+            .clickable(onClick = { onClick(coinUi) }),
+        elevation = CardDefaults.cardElevation(6.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            contentColor = contentColor
+        )
+    ) {
+        Column(
+            modifier = modifier
+                .padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            AppAsyncImage(url = coinUi.iconUrl, name = coinUi.name)
+            Row() {
+                Text(
+                    text = coinUi.symbol,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = primaryFontColor
+                )
+                PriceChange(
+                    change = coinUi.change
+                )
+            }
+        }
+    }
+}
 
 internal val previewTopCoin = Coin(
     id = "bitcoin",
@@ -129,6 +173,7 @@ internal val previewTopCoin = Coin(
     price = 1241273958896.75,
     change = 0.1,
     rank = 1,
+    sparkline = listOf(1.0, 2.0, 3.0, 4.0, 5.0),
     marketCap = 1241273958896.54,
     iconUrl = "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg"
 ).toCoinUi()

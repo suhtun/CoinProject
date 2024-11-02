@@ -19,24 +19,31 @@ import com.su.coinproject.features.coin.presentation.coin_list.model.previewCoin
 import com.su.coinproject.ui.theme.CoinProjectTheme
 
 @Composable
-fun TopRankCoinListView(coins: List<CoinUi?>) {
-//    Row (
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(12.dp),
-//        verticalArrangement = Arrangement.Center,
-//        horizontalArrangement = Arrangement.spacedBy(10.dp,Alignment.CenterHorizontally)
-//    ){
-//        repeat(coins.size) { index ->
-//
-//        }
-//    }
+fun TopRankCoinListView(
+    coins: List<CoinUi?>,
+    showBottomUp: (CoinUi) -> Unit = {},
+    showSharedElementTransition: (CoinUi) -> Unit = {}
+) {
+    if (coins.isEmpty()) return
+
     Row(
         modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)
     ) {
-        repeat(coins.size) { index ->
-            coins[index]?.let { TopRankCoinItem(coinUi = it) }
+        coins[0]?.let {
+            TopRankCoinItem(
+                coinUi = it,
+                onClick = { coinUi -> showSharedElementTransition(coinUi) })
+        }
+        coins[1]?.let {
+            TopRankCoinItem(
+                coinUi = it,
+                onClick = { coinUi -> showBottomUp(coinUi) })
+        }
+        coins[2]?.let {
+            TopRankCoinItem(
+                coinUi = it,
+                onClick = { coinUi -> showSharedElementTransition(coinUi) })
         }
     }
 }

@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -76,7 +77,7 @@ dependencies {
     implementation(libs.bundles.koin)
     implementation(libs.bundles.ktor)
     implementation(libs.gson)
-    implementation("io.coil-kt:coil-svg:2.4.0")
+    implementation(libs.coil.svg)
 
     testImplementation(libs.turbine)
     androidTestImplementation(libs.turbine)

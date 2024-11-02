@@ -2,6 +2,9 @@ package com.su.coinproject.features.coin.presentation.coin_detail
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -33,24 +36,24 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import com.su.coinproject.core.presentation.components.AppAsyncImage
 import com.su.coinproject.core.presentation.components.hexToColor
 import com.su.coinproject.features.coin.presentation.coin_list.CoinListAction
 import com.su.coinproject.features.coin.presentation.coin_list.CoinListViewModel
+import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
 import com.su.coinproject.ui.theme.blueColor
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun CoinDetailView(viewModel: CoinListViewModel = koinViewModel()) {
+fun CoinDetailBottomUp(
+    modifier: Modifier = Modifier,
+    coinUi: CoinUi? = null,
+    onDismissed: () -> Unit = {},
+) {
 
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-    val coinUi = state.selectedCoin ?: return
-
-    val context = LocalContext.current
+    coinUi ?: return
 
     // Create a scope to launch coroutines
     val scope = rememberCoroutineScope()
@@ -58,13 +61,13 @@ fun CoinDetailView(viewModel: CoinListViewModel = koinViewModel()) {
     // State for the Bottom Sheet dialog visibility
     val sheetState = rememberModalBottomSheetState()
 
-    val primaryFontColor  = if(isSystemInDarkTheme()) {
+    val primaryFontColor = if (isSystemInDarkTheme()) {
         Color.White
     } else {
         Color.Black
     }
 
-    val secondaryFontColor  = if(isSystemInDarkTheme()) {
+    val secondaryFontColor = if (isSystemInDarkTheme()) {
         Color.LightGray
     } else {
         Color.DarkGray
@@ -72,7 +75,7 @@ fun CoinDetailView(viewModel: CoinListViewModel = koinViewModel()) {
 
     ModalBottomSheet(sheetState = sheetState,
         onDismissRequest = {
-            viewModel.onAction(CoinListAction.OnDismissCoinDetailBottomUp)
+            onDismissed()
         }
     ) {
         // Content inside the Bottom Sheet
@@ -149,34 +152,34 @@ fun CoinDetailView(viewModel: CoinListViewModel = koinViewModel()) {
                 }
             }
 
-            Text(
-                text = coinUi.description ?: "No description",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
-                color = secondaryFontColor,
-                modifier = Modifier.padding(16.dp)
-            )
-
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(Color.LightGray)
-            )
-
-            coinUi.websiteUrl?.let { websiteUrl ->
-                Text(text = "GO TO WEBSITE",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = blueColor,
-                    modifier = Modifier
-                        .padding(vertical = 16.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(websiteUrl))
-                            context.startActivity(intent)
-                        })
-            }
+//            Text(
+//                text = coinUi.description ?: "No description",
+//                fontSize = 14.sp,
+//                fontWeight = FontWeight.Normal,
+//                color = secondaryFontColor,
+//                modifier = Modifier.padding(16.dp)
+//            )
+//
+//            Spacer(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(1.dp)
+//                    .background(Color.LightGray)
+//            )
+//
+//            coinUi.websiteUrl?.let { websiteUrl ->
+//                Text(text = "GO TO WEBSITE",
+//                    fontSize = 14.sp,
+//                    fontWeight = FontWeight.Bold,
+//                    color = blueColor,
+//                    modifier = Modifier
+//                        .padding(vertical = 16.dp)
+//                        .align(Alignment.CenterHorizontally)
+//                        .clickable {
+//                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(websiteUrl))
+//                            context.startActivity(intent)
+//                        })
+//            }
 
         }
     }

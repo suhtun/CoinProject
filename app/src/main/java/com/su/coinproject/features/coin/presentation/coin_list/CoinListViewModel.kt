@@ -47,10 +47,36 @@ class CoinListViewModel(
                 loadCoinDetail(action.coinUi)
             }
 
-            is CoinListAction.OnDismissCoinDetailBottomUp -> {
+            CoinListAction.OnDismissCoinDetailBottomUp -> {
                 _state.update {
                     it.copy(
-                        showCoinDetail = false
+                        isShowingCoinDetailBottomUp = false
+                    )
+                }
+            }
+
+            is CoinListAction.ShowCoinDetailBottomUp -> {
+                _state.update {
+                    it.copy(
+                        selectedCoin = action.coinUi,
+                        isShowingCoinDetailBottomUp = true
+                    )
+                }
+            }
+
+            is CoinListAction.ShowCoinDetailSharedElements -> {
+                _state.update {
+                    it.copy(
+                        selectedCoin = action.coinUi,
+                        isShowingCoinDetailSharedElements = true
+                    )
+                }
+            }
+
+            CoinListAction.OnDismissCoinDetailSharedElements -> {
+                _state.update {
+                    it.copy(
+                        isShowingCoinDetailSharedElements = false
                     )
                 }
             }
@@ -75,7 +101,6 @@ class CoinListViewModel(
                                 description = coinDetail.description,
                                 websiteUrl = coinDetail.websiteUrl
                             ),
-                            showCoinDetail = true,
                             isLoading = false
                         )
                     }
@@ -83,8 +108,8 @@ class CoinListViewModel(
                 .onError { error ->
                     _state.update {
                         it.copy(
-                            showCoinDetail = false,
-                            isLoading = false
+                            isLoading = false,
+                            isErrorDisplayed = true,
                         )
                     }
                 }

@@ -1,5 +1,8 @@
 package com.su.coinproject.features.coin.presentation.coin_list
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,12 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,21 +45,26 @@ import com.su.coinproject.R
 import com.su.coinproject.core.presentation.components.AppLoadingView
 import com.su.coinproject.core.presentation.components.ErrorMessageView
 import com.su.coinproject.features.coin.presentation.coin_search.CoinSearchBarView
-import com.su.coinproject.features.coin.presentation.coin_detail.CoinDetailView
+import com.su.coinproject.features.coin.presentation.coin_detail.CoinDetailBottomUp
+import com.su.coinproject.features.coin.presentation.coin_detail.CoinDetailScreen
 import com.su.coinproject.features.coin.presentation.coin_list.components.CoinListItem
-import com.su.coinproject.features.coin.presentation.coin_list.components.InviteFriendItem
-import com.su.coinproject.features.coin.presentation.coin_list.model.CoinListItemType
 import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
 import org.koin.androidx.compose.koinViewModel
 
 const val maxTopBoxSize = 260f
 const val minTopBoxSize = 0f
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class,
+    ExperimentalSharedTransitionApi::class
+)
 @Composable
 fun CoinListScreen(
     modifier: Modifier = Modifier,
-    viewModel: CoinListViewModel = koinViewModel()
+    viewModel: CoinListViewModel = koinViewModel(),
+    onShowDetail: (CoinUi) -> Unit = {},
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     val coins: LazyPagingItems<CoinUi> =
         viewModel.coinListPagingFlow.collectAsLazyPagingItems()
@@ -67,7 +74,7 @@ fun CoinListScreen(
     var isRefreshing by remember { mutableStateOf(false) }
 
     var currentImageSize by remember {
-        mutableStateOf(maxTopBoxSize)
+        mutableFloatStateOf(maxTopBoxSize)
     }
 
     val nestedScrollConnection = remember {
@@ -98,7 +105,6 @@ fun CoinListScreen(
                 testTagsAsResourceId = true
             }
             .fillMaxSize()
-//            .background(MaterialTheme.colorScheme.background)
     ) {
 
         CoinSearchBarView()
@@ -110,6 +116,7 @@ fun CoinListScreen(
                 onRefresh = {
                     isRefreshing = true
                     coins.refresh() // Refresh the LazyPagingItems
+                    isRefreshing = false
                 }) {
 
                 val topRanks = coins.itemSnapshotList.sortedByDescending { it?.rank }.take(3)
@@ -132,7 +139,13 @@ fun CoinListScreen(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(16.dp)
                     )
-                    TopRankCoinListView(coins = topRanks)
+                    TopRankCoinListView(coins = topRanks,
+                        showBottomUp = { coin ->
+                            viewModel.onAction(CoinListAction.ShowCoinDetailBottomUp(coin))
+                        },
+                        showSharedElementTransition = { coin ->
+                            onShowDetail(coin)
+                        })
 
 
                 }
@@ -158,9 +171,11 @@ fun CoinListScreen(
                     items(coins.itemCount) { index ->
                         coins[index]?.let { coinUi ->
                             CoinListItem(
+                                modifier = Modifier.animateItem(),
                                 coinUi,
                                 onClick = { coin ->
                                     viewModel.onAction(CoinListAction.OnCoinClick(coin))
+                                    onShowDetail(coin)
                                 })
                         }
                     }
@@ -199,8 +214,20 @@ fun CoinListScreen(
             AppLoadingView()
         }
 
-        if (state.showCoinDetail) {
-            CoinDetailView()
+        if (state.isShowingCoinDetailBottomUp) {
+            CoinDetailBottomUp(
+                coinUi = state.selectedCoin,
+                onDismissed = { viewModel.onAction(CoinListAction.OnDismissCoinDetailBottomUp) })
+        }
+
+        if (state.isShowingCoinDetailSharedElements) {
+            println("i am here")
+            CoinDetailScreen(
+                coin = state.selectedCoin,
+                onBack = { viewModel.onAction(CoinListAction.OnDismissCoinDetailSharedElements) },
+                sharedTransitionScope = sharedTransitionScope,
+                animatedVisibilityScope = animatedVisibilityScope
+            )
         }
     }
 }
