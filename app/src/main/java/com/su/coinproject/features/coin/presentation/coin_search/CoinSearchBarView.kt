@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ManageSearch
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -104,7 +107,7 @@ fun CoinSearchBarView(
                     placeholder = { Text("Search") },
                     leadingIcon = {
                         Icon(
-                            painter = painterResource(id = R.drawable.baseline_search_24),
+                            imageVector = Icons.AutoMirrored.Filled.ManageSearch,
                             contentDescription = null
                         )
                     },
@@ -112,7 +115,7 @@ fun CoinSearchBarView(
                         if (keyword.isNotEmpty()) {
                             IconButton(onClick = { keyword = "" }) {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.round_clear_24),
+                                    imageVector = Icons.Filled.Clear,
                                     contentDescription = null
                                 )
                             }

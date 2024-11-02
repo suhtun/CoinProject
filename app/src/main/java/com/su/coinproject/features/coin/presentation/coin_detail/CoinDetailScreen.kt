@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -88,11 +89,12 @@ fun CoinDetailScreen(
 
 //            with(sharedTransitionScope) {
             AppAsyncImage(
-                modifier = Modifier.size(120.dp),
-//                        .sharedElement(
-//                            state = rememberSharedContentState(key = coinUi.id),
-//                            animatedVisibilityScope
-//                        ),
+                modifier = Modifier
+                    .size(120.dp),
+//                    .sharedElement(
+//                        state = rememberSharedContentState(key = coinUi.id),
+//                        animatedVisibilityScope,
+//                    ),
                 url = coinUi.iconUrl,
                 name = coinUi.name
             )

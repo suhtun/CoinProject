@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -146,8 +147,6 @@ fun CoinListScreen(
                         showSharedElementTransition = { coin ->
                             onShowDetail(coin)
                         })
-
-
                 }
 
                 val configuration = LocalConfiguration.current
@@ -170,13 +169,19 @@ fun CoinListScreen(
                 ) {
                     items(coins.itemCount) { index ->
                         coins[index]?.let { coinUi ->
-                            CoinListItem(
-                                modifier = Modifier.animateItem(),
-                                coinUi,
-                                onClick = { coin ->
-                                    viewModel.onAction(CoinListAction.OnCoinClick(coin))
-                                    onShowDetail(coin)
-                                })
+                            with(sharedTransitionScope) {
+                                CoinListItem(
+//                                    modifier = Modifier
+//                                    .sharedElement(
+//                                        state = rememberSharedContentState(key = coinUi.id),
+//                                        animatedVisibilityScope,
+//                                    ),
+                                    coinUi = coinUi,
+                                    onClick = { coin ->
+                                        viewModel.onAction(CoinListAction.OnCoinClick(coin))
+                                        onShowDetail(coin)
+                                    })
+                            }
                         }
                     }
 

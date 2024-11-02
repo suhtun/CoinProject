@@ -2,6 +2,9 @@ package com.su.coinproject.features.coin.presentation.coin_list.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,13 +36,13 @@ fun PriceChange(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            painter = painterResource(
-                id = if (change.value < 0.0) {
-                    R.drawable.baseline_arrow_downward_24
+            imageVector =
+                if (change.value < 0.0) {
+                    Icons.Filled.ArrowDownward
                 } else {
-                    R.drawable.baseline_arrow_upward_24
+                    Icons.Filled.ArrowUpward
                 }
-            ),
+            ,
             contentDescription = null,
             modifier = Modifier.size(12.dp),
             tint = contentColor
