@@ -1,8 +1,5 @@
 package com.su.coinproject.features.coin.presentation.coin_list
 
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,10 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -30,49 +25,47 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.su.coinproject.R
 import com.su.coinproject.core.presentation.components.AppLoadingView
 import com.su.coinproject.core.presentation.components.ErrorMessageView
+import com.su.coinproject.features.coin.data.remote.CustomPagingException
 import com.su.coinproject.features.coin.presentation.coin_search.CoinSearchBarView
-import com.su.coinproject.features.coin.presentation.coin_detail.CoinDetailBottomUp
-import com.su.coinproject.features.coin.presentation.coin_detail.CoinDetailScreen
 import com.su.coinproject.features.coin.presentation.coin_list.components.CoinListItem
+import com.su.coinproject.features.coin.presentation.coin_list.components.TopRankCoinListView
 import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
-import org.koin.androidx.compose.koinViewModel
+import com.su.coinproject.features.coin.presentation.coin_list.model.previewCoinUi
+import com.su.coinproject.ui.theme.CoinProjectTheme
+import kotlinx.coroutines.flow.flowOf
 
-const val maxTopBoxSize = 260f
+const val maxTopBoxSize = 210f
 const val minTopBoxSize = 0f
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class,
-    ExperimentalSharedTransitionApi::class
 )
 @Composable
 fun CoinListScreen(
+    state: CoinListState,
+    onAction: (CoinListAction) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CoinListViewModel = koinViewModel(),
-    onShowDetail: (CoinUi) -> Unit = {},
-    sharedTransitionScope: SharedTransitionScope,
-    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
-    val coins: LazyPagingItems<CoinUi> =
-        viewModel.coinListPagingFlow.collectAsLazyPagingItems()
 
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val lazyPagingCoins: LazyPagingItems<CoinUi> =
+        state.coins?.collectAsLazyPagingItems() ?: return
 
-    var isRefreshing by remember { mutableStateOf(false) }
+    var isRefreshing = (lazyPagingCoins.loadState.refresh is LoadState.Loading)
 
     var currentImageSize by remember {
         mutableFloatStateOf(maxTopBoxSize)
@@ -116,11 +109,12 @@ fun CoinListScreen(
             PullToRefreshBox(isRefreshing = isRefreshing,
                 onRefresh = {
                     isRefreshing = true
-                    coins.refresh() // Refresh the LazyPagingItems
+                    lazyPagingCoins.refresh()
                     isRefreshing = false
                 }) {
 
-                val topRanks = coins.itemSnapshotList.sortedByDescending { it?.rank }.take(3)
+                val topRanks =
+                    lazyPagingCoins.itemSnapshotList.sortedByDescending { it?.rank }.take(3)
 
                 Column(
                     Modifier
@@ -141,98 +135,56 @@ fun CoinListScreen(
                         modifier = Modifier.padding(16.dp)
                     )
                     TopRankCoinListView(coins = topRanks,
-                        showBottomUp = { coin ->
-                            viewModel.onAction(CoinListAction.ShowCoinDetailBottomUp(coin))
-                        },
-                        showSharedElementTransition = { coin ->
-                            onShowDetail(coin)
+                        navigateToDetail = { coin ->
+                            onAction(CoinListAction.NavigateToDetail(coin))
                         })
                 }
 
-                val configuration = LocalConfiguration.current
-                val screenWidthDp = configuration.screenWidthDp
-                val isLandscape =
-                    configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
-
-                val columns = when {
-                    screenWidthDp >= 900 -> 3 // 3 columns for tablets (or screens wider than 600dp)
-                    isLandscape -> 2          // 2 columns for phones in landscape
-                    else -> 1                 // 1 column for phones in portrait
-                }
-
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(columns),
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(top = currentImageSize.dp)
                         .testTag("coin_list"),
                 ) {
-                    items(coins.itemCount) { index ->
-                        coins[index]?.let { coinUi ->
-                            with(sharedTransitionScope) {
-                                CoinListItem(
-//                                    modifier = Modifier
-//                                    .sharedElement(
-//                                        state = rememberSharedContentState(key = coinUi.id),
-//                                        animatedVisibilityScope,
-//                                    ),
-                                    coinUi = coinUi,
-                                    onClick = { coin ->
-                                        viewModel.onAction(CoinListAction.OnCoinClick(coin))
-                                        onShowDetail(coin)
-                                    })
-                            }
+                    items(lazyPagingCoins.itemCount) { index ->
+                        lazyPagingCoins[index]?.let { coinUi ->
+                            CoinListItem(
+                                coinUi = coinUi,
+                                onClick = { coin ->
+                                    onAction(CoinListAction.NavigateToDetail(coin))
+                                })
+
                         }
                     }
 
                     item {
-                        when {
-                            coins.loadState.refresh is LoadState.Loading -> {
-                                AppLoadingView()
+                        when (val loadState = lazyPagingCoins.loadState.refresh) {
+                            is LoadState.Error -> {
+                                val e = loadState.error as? CustomPagingException
+                                ErrorMessageView(message = e?.networkError.toString()) {
+                                    lazyPagingCoins.retry()
+                                }
                             }
+                            else ->{}
+                        }
 
-                            coins.loadState.refresh is LoadState.Error -> {
-                                val e = coins.loadState.refresh as LoadState.Error
-                                ErrorMessageView(message = e.error.message) {
-                                    coins.retry()
+                        when (val loadState = lazyPagingCoins.loadState.append) {
+                            is LoadState.Error -> {
+                                val e = loadState.error as? CustomPagingException
+                                ErrorMessageView(message = e?.networkError.toString()) {
+                                    lazyPagingCoins.retry()
                                 }
                             }
 
-                            coins.loadState.append is LoadState.Error -> {
-                                val e = coins.loadState.append as LoadState.Error
-                                ErrorMessageView(message = e.error.message) {
-                                    coins.retry()
-                                }
-                            }
-
-                            coins.loadState.append is LoadState.Loading -> {
+                            LoadState.Loading -> {
                                 AppLoadingView()
                             }
+
+                            is LoadState.NotLoading -> {}
                         }
                     }
                 }
             }
-
-        }
-
-        if (state.isLoading) {
-            AppLoadingView()
-        }
-
-        if (state.isShowingCoinDetailBottomUp) {
-            CoinDetailBottomUp(
-                coinUi = state.selectedCoin,
-                onDismissed = { viewModel.onAction(CoinListAction.OnDismissCoinDetailBottomUp) })
-        }
-
-        if (state.isShowingCoinDetailSharedElements) {
-            println("i am here")
-            CoinDetailScreen(
-                coin = state.selectedCoin,
-                onBack = { viewModel.onAction(CoinListAction.OnDismissCoinDetailSharedElements) },
-                sharedTransitionScope = sharedTransitionScope,
-                animatedVisibilityScope = animatedVisibilityScope
-            )
         }
     }
 }

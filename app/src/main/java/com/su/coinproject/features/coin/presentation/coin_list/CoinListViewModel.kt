@@ -14,16 +14,17 @@ import com.su.coinproject.features.coin.presentation.coin_list.model.toCoinUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CoinListViewModel(
-    pager: Pager<Int, Coin>,
+    private val pager: Pager<Int, Coin>,
     private val coinRepository: CoinRepository,
 ) : ViewModel() {
 
-    var coinListPagingFlow = pager
+    private var coinListPagingFlow = pager
         .flow
         .map { pagingData ->
             pagingData.map { item ->
@@ -33,55 +34,19 @@ class CoinListViewModel(
         }
         .cachedIn(viewModelScope)
 
-
     private val _state = MutableStateFlow(CoinListState())
-    val state = _state.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5000L),
-        CoinListState()
-    )
-
-    fun onAction(action: CoinListAction) {
-        when (action) {
-            is CoinListAction.OnCoinClick -> {
-                loadCoinDetail(action.coinUi)
-            }
-
-            CoinListAction.OnDismissCoinDetailBottomUp -> {
-                _state.update {
-                    it.copy(
-                        isShowingCoinDetailBottomUp = false
-                    )
-                }
-            }
-
-            is CoinListAction.ShowCoinDetailBottomUp -> {
-                _state.update {
-                    it.copy(
-                        selectedCoin = action.coinUi,
-                        isShowingCoinDetailBottomUp = true
-                    )
-                }
-            }
-
-            is CoinListAction.ShowCoinDetailSharedElements -> {
-                _state.update {
-                    it.copy(
-                        selectedCoin = action.coinUi,
-                        isShowingCoinDetailSharedElements = true
-                    )
-                }
-            }
-
-            CoinListAction.OnDismissCoinDetailSharedElements -> {
-                _state.update {
-                    it.copy(
-                        isShowingCoinDetailSharedElements = false
-                    )
-                }
+    val state = _state
+        .onStart {
+            _state.update {
+                it.copy(coins = coinListPagingFlow)
             }
         }
-    }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            CoinListState()
+        )
+
 
     private fun loadCoinDetail(coinUi: CoinUi) {
         viewModelScope.launch {
@@ -109,7 +74,6 @@ class CoinListViewModel(
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            isErrorDisplayed = true,
                         )
                     }
                 }

@@ -12,51 +12,58 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.su.coinproject.features.coin.presentation.coin_detail.CoinDetailScreen
+import com.su.coinproject.features.coin.presentation.coin_list.CoinListAction
 import com.su.coinproject.features.coin.presentation.coin_list.CoinListScreen
 import com.su.coinproject.features.coin.presentation.coin_list.CoinListViewModel
 import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
 import kotlinx.parcelize.Parcelize
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun AdaptiveCoinListDetailPane(
     modifier: Modifier = Modifier,
+    viewModel: CoinListViewModel = koinViewModel()
 ) {
     val navigator = rememberListDetailPaneScaffoldNavigator<CoinItem>()
 
-    SharedTransitionLayout {
-        ListDetailPaneScaffold(directive = navigator.scaffoldDirective,
-            value = navigator.scaffoldValue,
-            listPane = {
-                AnimatedPane {
-                    CoinListScreen(
-                        onShowDetail = {
-                            navigator.navigateTo(
-                                ListDetailPaneScaffoldRole.Detail,
-                                CoinItem(it)
-                            )
-                        },
-                        animatedVisibilityScope = this,
-                        sharedTransitionScope = this@SharedTransitionLayout
-                    )
-                }
-            },
-            detailPane = {
-                AnimatedPane {
-                    val coinUi = navigator.currentDestination?.content?.coinUi
-                    CoinDetailScreen(
-                        modifier = modifier,
-                        coin = coinUi,
-                        onBack = { navigator.navigateBack() },
-                        animatedVisibilityScope = this,
-                        sharedTransitionScope = this@SharedTransitionLayout
-                    )
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
 
-                }
+    ListDetailPaneScaffold(directive = navigator.scaffoldDirective,
+        value = navigator.scaffoldValue,
+        listPane = {
+            AnimatedPane {
+                CoinListScreen(
+                    state = uiState,
+                    onAction = {
+                        when (it) {
+                            is CoinListAction.NavigateToDetail -> {
+                                navigator.navigateTo(
+                                    ListDetailPaneScaffoldRole.Detail,
+                                    CoinItem(coinUi = it.coinUi)
+                                )
+                            }
+                        }
+                    },
+                )
             }
-        )
-    }
+        },
+        detailPane = {
+            AnimatedPane {
+                val coinUi = navigator.currentDestination?.content?.coinUi
+                CoinDetailScreen(
+                    modifier = modifier,
+                    coin = coinUi,
+                    onBack = { navigator.navigateBack() },
+                )
+
+            }
+        }
+    )
+
 }
 
 @Parcelize

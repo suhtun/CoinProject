@@ -37,7 +37,7 @@ internal val previewCoin = Coin(
     iconUrl = "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg"
 )
 
-internal val previewCoinUi = Coin(
+val previewCoinUi = Coin(
     id = "bitcoin",
     name = "Bitcoin",
     color = "#f7931A",

@@ -1,8 +1,5 @@
 package com.su.coinproject.features.coin.presentation.coin_detail
 
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -17,11 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,29 +25,25 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.su.coinproject.core.presentation.components.AppAsyncImage
-import com.su.coinproject.features.coin.presentation.coin_list.CoinListViewModel
+import com.su.coinproject.features.coin.domain.Coin
+import com.su.coinproject.features.coin.presentation.coin_detail.components.LiveChatView
 import com.su.coinproject.features.coin.presentation.coin_list.model.CoinUi
+import com.su.coinproject.features.coin.presentation.coin_list.model.toCoinUi
+import com.su.coinproject.ui.theme.CoinProjectTheme
 import com.su.coinproject.ui.theme.greenColor
 import com.su.coinproject.ui.theme.redColor
-import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CoinDetailScreen(
     modifier: Modifier = Modifier,
     coin: CoinUi? = null,
     onBack: () -> Unit = {},
-    sharedTransitionScope: SharedTransitionScope,
-    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
-    println("i am here")
-
     val coinUi = coin ?: return
-
-    println("i am here afer coin ")
 
     val primaryFontColor = if (isSystemInDarkTheme()) {
         Color.White
@@ -87,18 +77,12 @@ fun CoinDetailScreen(
                 )
             }
 
-//            with(sharedTransitionScope) {
             AppAsyncImage(
                 modifier = Modifier
                     .size(120.dp),
-//                    .sharedElement(
-//                        state = rememberSharedContentState(key = coinUi.id),
-//                        animatedVisibilityScope,
-//                    ),
                 url = coinUi.iconUrl,
                 name = coinUi.name
             )
-//            }
 
             val styledText = buildAnnotatedString {
                 withStyle(
@@ -168,5 +152,37 @@ fun CoinDetailScreen(
             )
         }
     }
-
 }
+@Preview
+@Composable
+fun CoinDetailScreenPreview(modifier: Modifier = Modifier) {
+    CoinProjectTheme {
+        CoinDetailScreen(
+            coin = Coin(
+                id = "bitcoin",
+                name = "Bitcoin",
+                color = "#f7931A",
+                symbol = "BTC",
+                price = 1241273958896.75,
+                change = 0.1,
+                rank = 1,
+                sparkline = listOf(1.0, 2.0, 3.0, 4.0, 5.0),
+                marketCap = 1241273958896.54,
+                iconUrl = "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg"
+            ).toCoinUi()
+        )
+    }
+}
+
+internal val coinUi = Coin(
+    id = "bitcoin",
+    name = "Bitcoin",
+    color = "#f7931A",
+    symbol = "BTC",
+    price = 1241273958896.75,
+    change = 0.1,
+    rank = 1,
+    sparkline = listOf(1.0, 2.0, 3.0, 4.0, 5.0),
+    marketCap = 1241273958896.54,
+    iconUrl = "https://cdn.coinranking.com/bOabBYkcX/bitcoin_btc.svg"
+).toCoinUi()

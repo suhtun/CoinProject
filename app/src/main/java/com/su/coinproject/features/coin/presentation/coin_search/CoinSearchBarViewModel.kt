@@ -27,9 +27,6 @@ class CoinSearchBarViewModel(
         CoinSearchBarState()
     )
 
-    private val _stateFlow = MutableStateFlow(0)
-    val stateFlow = _stateFlow.asStateFlow()
-
     fun onAction(action: CoinSearchBarAction) {
         when (action) {
             is CoinSearchBarAction.OnSearch -> {
@@ -42,7 +39,7 @@ class CoinSearchBarViewModel(
         }
     }
 
-    fun searchCoins(keyword: String, showLoading: Boolean) {
+    private fun searchCoins(keyword: String, showLoading: Boolean) {
         viewModelScope.launch {
             _state.update {
                 it.copy(
